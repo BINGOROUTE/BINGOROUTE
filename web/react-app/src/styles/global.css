@@ -1,6 +1,5 @@
-export function insertBaseStyles() {
-  const css = `:root{--bg:#0b1b2b;--text:#0f172a;--muted:#64748b;--brand:#2563eb;--brand-2:#1d4ed8;--card:#ffffff;--soft:#f1f5f9;--ring:rgba(37,99,235,.35)}
-*{box-sizing:border-box}html,body,#app{height:100%}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:var(--text);background:linear-gradient(180deg,#eef2ff, #f8fafc)}
+:root{--bg:#0b1b2b;--text:#0f172a;--muted:#64748b;--brand:#2563eb;--brand-2:#1d4ed8;--card:#ffffff;--soft:#f1f5f9;--ring:rgba(37,99,235,.35)}
+*{box-sizing:border-box}html,body,#root{height:100%}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:var(--text);background:linear-gradient(180deg,#eef2ff, #f8fafc)}
 .br-layout{display:flex;flex-direction:column;min-height:100%}
 header.br-header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.8);backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid #e5e7eb}
 .br-container{max-width:1100px;margin:0 auto;padding:14px 20px}
@@ -13,7 +12,7 @@ header.br-header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.8
 .brand-btn{background:var(--brand);color:#fff;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;box-shadow:0 6px 16px var(--ring)}
 .brand-btn:active{transform:translateY(1px)}
 
-.hero{background:url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 300\"><defs><linearGradient id=\"g\" x1=\"0\" x2=\"0\" y1=\"0\" y2=\"1\"><stop stop-color=\"%232563eb\"/><stop offset=\"1\" stop-color=\"%231d4ed8\"/></linearGradient></defs><rect width=\"1200\" height=\"300\" fill=\"url(%23g)\"/></svg>') center/cover;border-radius:18px;color:#fff;padding:28px 24px;margin:16px 0}
+.hero{background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300"><defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop stop-color="%232563eb"/><stop offset="1" stop-color="%231d4ed8"/></linearGradient></defs><rect width="1200" height="300" fill="url(%23g)"/></svg>') center/cover;border-radius:18px;color:#fff;padding:28px 24px;margin:16px 0}
 .hero h1{margin:8px 0 6px;font-size:26px}
 .hero p{margin:0;color:#e0e7ff}
 
@@ -66,9 +65,3 @@ header.br-header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.8
 
 @media (max-width: 960px){.cards{grid-template-columns:1fr 1fr}.hero{padding:22px}.hero h1{font-size:22px}}
 @media (max-width: 640px){.cards{grid-template-columns:1fr}.br-container{padding:12px}}
-`;
-  const style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
-}
-

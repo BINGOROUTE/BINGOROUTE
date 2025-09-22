@@ -39,4 +39,3 @@ export const WEATHER_PRESETS = {
   '부산': { temp: 21, humidity: 52, wind: '3.1 m/s', sky: '구름 조금', advice: '바닷바람이 선선해요. 모자 챙기기 🧢' },
   '제주': { temp: 20, humidity: 58, wind: '5.2 m/s', sky: '바람 강함', advice: '바람막이 필수! 🌬️' },
 };
-
