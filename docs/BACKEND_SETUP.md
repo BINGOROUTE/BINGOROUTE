@@ -138,6 +138,18 @@ docker-compose up -d
 - `GET /api/weather/statistics/` - 날씨 데이터 통계
 - `GET /api/destinations/` - 여행지 목록
 
+### 👤 인증 API (JWT Access 토큰)
+- `POST /api/auth/signup/`
+  - body: `{ "name": string, "email": string, "password": string, "confirm_password": string }`
+  - response: `{ user: {...} }` (필요 시 토큰 발급 로직 추가 가능)
+- `POST /api/auth/login/`
+  - body: `{ "email": string, "password": string }`
+  - response: `{ access: string, user: {...} }`
+
+사용법
+- 요청 시 `Authorization: Bearer <access_token>` 헤더로 인증합니다.
+- 세션/쿠키/CSRF는 사용하지 않습니다. CORS는 기본 허용(origin 화이트리스트 포함).
+
 ## 🎯 프론트엔드 연동
 백엔드가 정상 실행되면 React 앱에서 다음과 같이 연동:
 ```javascript
