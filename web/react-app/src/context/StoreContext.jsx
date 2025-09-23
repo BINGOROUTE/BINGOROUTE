@@ -24,6 +24,8 @@ export const StoreProvider = ({ children }) => {
     setTrips(JSON.parse(localStorage.getItem('br_trips') || '[]'))
   }, [])
 
+  // No backend session hydration; JWT is stored in session as `access`
+
   // Save to localStorage when state changes
   useEffect(() => {
     localStorage.setItem('br_users', JSON.stringify(users))

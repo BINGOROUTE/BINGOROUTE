@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import { signup as signupRequest, login as loginRequest } from '../services/authService'
 
 const SignupView = () => {
-  const { users, setUsers, setSession } = useStore()
+  const { setSession } = useStore()
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
@@ -20,7 +21,7 @@ const SignupView = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
@@ -29,21 +30,20 @@ const SignupView = () => {
       return
     }
 
-    if (users.find(u => u.email === formData.email)) {
-      setError('이미 존재하는 이메일입니다.')
-      return
+    try {
+      const user = await signupRequest({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        confirm_password: formData.confirmPassword
+      })
+      // Auto-login to obtain access token
+      const { access } = await loginRequest({ email: formData.email, password: formData.password })
+      setSession({ ...user, access })
+      navigate('/')
+    } catch (err) {
+      setError(err.message || '회원가입에 실패했습니다.')
     }
-
-    const newUser = {
-      id: Date.now().toString(),
-      name: formData.name,
-      email: formData.email,
-      password: formData.password
-    }
-
-    setUsers([...users, newUser])
-    setSession(newUser)
-    navigate('/')
   }
 
   return (

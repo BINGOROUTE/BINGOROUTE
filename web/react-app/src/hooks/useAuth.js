@@ -7,7 +7,7 @@ export const useAuth = () => {
     setSession(user)
   }
 
-  const logout = () => {
+  const logout = async () => {
     setSession(null)
   }
 

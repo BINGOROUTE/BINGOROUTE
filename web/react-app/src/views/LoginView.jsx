@@ -1,24 +1,24 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import { login as loginRequest } from '../services/authService'
 
 const LoginView = () => {
-  const { users, setSession } = useStore()
+  const { setSession } = useStore()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-
-    const user = users.find(u => u.email === email && u.password === password)
-    if (user) {
-      setSession(user)
+    try {
+      const { user, access } = await loginRequest({ email, password })
+      setSession({ ...user, access })
       navigate('/')
-    } else {
-      setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+    } catch (err) {
+      setError(err.message || '로그인에 실패했습니다.')
     }
   }
 

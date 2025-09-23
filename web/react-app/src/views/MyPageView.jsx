@@ -51,7 +51,7 @@ const MyPageView = () => {
           <div className="grid-2">
             <div>
               <strong>이름</strong>
-              <p>{session.name}</p>
+              <p>{session.name || session.first_name || ''}</p>
             </div>
             <div>
               <strong>이메일</strong>

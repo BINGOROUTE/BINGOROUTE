@@ -18,7 +18,7 @@ const Header = () => {
     if (isAuthenticated) {
       return (
         <div className="row">
-          <span className="muted">{user.name || user.email}</span>
+          <span className="muted">{user.name || user.first_name || user.email}</span>
           <Link to={ROUTES.MYPAGE} className="ghost-btn">내 정보</Link>
           <button className="ghost-btn" onClick={logout}>로그아웃</button>
         </div>
