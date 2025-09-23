@@ -1,3 +1,5 @@
+import "../styles/header.css";
+import logo from "../assets/BingoRoute.jpeg";
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
@@ -35,7 +37,7 @@ const Header = () => {
     <header className="br-header">
       <div className="br-container row">
         <Link to={ROUTES.HOME} className="brand">
-          <span className="badge">B</span>
+          <img src={logo} alt="BingoRoute Logo" className="logo-badge" />
           <span>빙고루트</span>
         </Link>
         <div className="search">
