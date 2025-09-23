@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useStore } from '../context/StoreContext'
+import { weatherService } from '../services/weatherService'
 
 const PlanView = () => {
   const { session, trips, setTrips } = useStore()
@@ -9,8 +10,12 @@ const PlanView = () => {
     style: '',
     budget: '',
     companions: '',
-    interests: []
+    interests: [],
+    selectedDate: ''
   })
+  const [weatherData, setWeatherData] = useState(null)
+  const [weatherRecommendation, setWeatherRecommendation] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   if (!session) {
     return (
@@ -22,8 +27,28 @@ const PlanView = () => {
     )
   }
 
-  const handleNext = () => {
-    if (step < 5) setStep(step + 1)
+  const handleNext = async () => {
+    if (step === 4) {
+      // 4단계에서 5단계로 넘어갈 때 날씨 데이터 로드
+      await loadWeatherData()
+    }
+    if (step < 6) setStep(step + 1)
+  }
+
+  const loadWeatherData = async () => {
+    setLoading(true)
+    try {
+      const midForecast = await weatherService.getMidForecast('서울')
+      const formattedData = weatherService.formatMidForecastData(midForecast)
+      const recommendation = weatherService.getWeatherRecommendation(formattedData)
+      
+      setWeatherData(formattedData)
+      setWeatherRecommendation(recommendation)
+    } catch (error) {
+      console.error('날씨 데이터 로드 실패:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handlePrev = () => {
@@ -34,8 +59,9 @@ const PlanView = () => {
     const newTrip = {
       id: Date.now().toString(),
       ...planData,
-      date: new Date().toISOString().split('T')[0],
-      title: `${planData.duration} 서울 여행`
+      date: planData.selectedDate || new Date().toISOString().split('T')[0],
+      title: `${planData.duration} 서울 여행`,
+      weatherScore: weatherRecommendation?.score || 0
     }
     setTrips([...trips, newTrip])
     alert('여행 계획이 저장되었습니다!')
@@ -116,6 +142,80 @@ const PlanView = () => {
       case 5:
         return (
           <div>
+            <h3 className="planner-title">날씨 기반 추천</h3>
+            <p className="planner-sub">향후 10일간의 날씨를 분석해서 최적의 여행 날짜를 추천해드려요</p>
+            
+            {loading ? (
+              <div className="center">
+                <p>날씨 정보를 불러오는 중...</p>
+              </div>
+            ) : weatherRecommendation ? (
+              <div>
+                <div className="weather-score-panel">
+                  <div className="score-circle">
+                    <span className="score">{weatherRecommendation.score}</span>
+                    <span className="score-label">점</span>
+                  </div>
+                  <p className="score-message">{weatherRecommendation.message}</p>
+                </div>
+
+                <div className="weather-recommendations">
+                  <h4>추천 날짜 TOP 3</h4>
+                  <div className="best-days">
+                    {weatherRecommendation.bestDays.slice(0, 3).map((day, index) => (
+                      <div 
+                        key={day.date} 
+                        className={`weather-day-card ${planData.selectedDate === day.date ? 'selected' : ''}`}
+                        onClick={() => setPlanData({...planData, selectedDate: day.date})}
+                      >
+                        <div className="day-rank">#{index + 1}</div>
+                        <div className="day-date">{day.formattedDate}</div>
+                        <div className="day-temp">
+                          {day.daily?.minTemp && day.daily?.maxTemp 
+                            ? `${day.daily.minTemp}° ~ ${day.daily.maxTemp}°`
+                            : '온도 정보 없음'
+                          }
+                        </div>
+                        <div className="day-score">점수: {day.score}</div>
+                        <div className="day-rain">
+                          강수확률: {Math.round(((day.am?.rainProb || 0) + (day.pm?.rainProb || 0)) / 2)}%
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="weather-details">
+                  <h4>전체 날씨 정보</h4>
+                  <div className="weather-list">
+                    {weatherRecommendation.allDays.map(day => (
+                      <div key={day.date} className="weather-item">
+                        <span className="weather-date">{day.formattedDate}</span>
+                        <span className="weather-temp">
+                          {day.daily?.minTemp && day.daily?.maxTemp 
+                            ? `${day.daily.minTemp}°~${day.daily.maxTemp}°`
+                            : '정보없음'
+                          }
+                        </span>
+                        <span className="weather-rain">
+                          강수 {Math.round(((day.am?.rainProb || 0) + (day.pm?.rainProb || 0)) / 2)}%
+                        </span>
+                        <span className="weather-score">점수: {day.score}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="center">
+                <p>날씨 정보를 불러올 수 없습니다.</p>
+              </div>
+            )}
+          </div>
+        )
+      case 6:
+        return (
+          <div>
             <h3 className="planner-title">계획이 완성되었습니다!</h3>
             <p className="planner-sub">선택하신 조건으로 맞춤 여행 계획을 생성했어요</p>
             <div className="panel">
@@ -123,6 +223,14 @@ const PlanView = () => {
               <div><strong>스타일:</strong> {planData.style}</div>
               <div><strong>예산:</strong> {planData.budget}</div>
               <div><strong>동행:</strong> {planData.companions}</div>
+              {planData.selectedDate && (
+                <div><strong>선택한 날짜:</strong> {
+                  weatherData?.find(d => d.date === planData.selectedDate)?.formattedDate || planData.selectedDate
+                }</div>
+              )}
+              {weatherRecommendation && (
+                <div><strong>날씨 점수:</strong> {weatherRecommendation.score}점</div>
+              )}
             </div>
           </div>
         )
@@ -135,7 +243,7 @@ const PlanView = () => {
     <div className="br-container">
       <div className="section">
         <div className="steps">
-          {[1, 2, 3, 4, 5].map(i => (
+          {[1, 2, 3, 4, 5, 6].map(i => (
             <div key={i} className={`step ${i <= step ? 'active' : ''}`}></div>
           ))}
         </div>
@@ -150,7 +258,7 @@ const PlanView = () => {
           >
             이전
           </button>
-          {step < 5 ? (
+          {step < 6 ? (
             <button 
               className="brand-btn" 
               onClick={handleNext}
@@ -158,10 +266,11 @@ const PlanView = () => {
                 (step === 1 && !planData.duration) ||
                 (step === 2 && !planData.style) ||
                 (step === 3 && !planData.budget) ||
-                (step === 4 && !planData.companions)
+                (step === 4 && !planData.companions) ||
+                (step === 5 && loading)
               }
             >
-              다음
+              {step === 4 ? '날씨 확인하기' : '다음'}
             </button>
           ) : (
             <button className="brand-btn" onClick={handleComplete}>

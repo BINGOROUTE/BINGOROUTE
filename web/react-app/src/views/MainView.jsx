@@ -1,18 +1,46 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { DESTINATIONS, WEATHER_PRESETS } from '../data/destinations'
+import { DESTINATIONS } from '../data/destinations'
 import DestinationCard from '../components/DestinationCard'
 import { useStore } from '../context/StoreContext'
+import { weatherService } from '../services/weatherService'
 
 const MainView = () => {
   const { session } = useStore()
   const navigate = useNavigate()
   const [filter, setFilter] = useState('')
   const [activeTab, setActiveTab] = useState('전체')
-  const [selectedCity, setSelectedCity] = useState('서울')
+  const [selectedDistrict, setSelectedDistrict] = useState('강남구')
+  const [weatherData, setWeatherData] = useState({})
+  const [loading, setLoading] = useState(true)
 
-  const cities = Object.keys(WEATHER_PRESETS)
   const tabs = ['전체', '인기', '산책', '전통']
+
+  // 날씨 데이터 로드
+  useEffect(() => {
+    const loadWeatherData = async () => {
+      setLoading(true)
+      try {
+        const currentWeather = await weatherService.getCurrentWeather()
+        if (currentWeather) {
+          const formattedData = weatherService.formatSeoulWeatherData(currentWeather)
+          setWeatherData(formattedData)
+
+          // 첫 번째 구를 기본 선택
+          const districts = Object.keys(formattedData)
+          if (districts.length > 0 && !districts.includes(selectedDistrict)) {
+            setSelectedDistrict(districts[0])
+          }
+        }
+      } catch (error) {
+        console.error('날씨 데이터 로드 실패:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadWeatherData()
+  }, [])
 
   // Listen for search events from header
   useEffect(() => {
@@ -28,21 +56,29 @@ const MainView = () => {
   }
 
   const filteredDestinations = DESTINATIONS.filter(d => {
-    const tabOk = activeTab === '전체' || 
-      (activeTab === '인기' ? d.rating >= 4.6 : 
-       d.tags.some(tag => 
-         (activeTab === '산책' && tag === '산책') || 
-         (activeTab === '전통' && tag === '전통')
-       ))
-    
+    const tabOk = activeTab === '전체' ||
+      (activeTab === '인기' ? d.rating >= 4.6 :
+        d.tags.some(tag =>
+          (activeTab === '산책' && tag === '산책') ||
+          (activeTab === '전통' && tag === '전통')
+        ))
+
     const query = filter.trim().toLowerCase()
-    const qOk = !query || 
+    const qOk = !query ||
       [d.name, d.area, d.short, d.tags.join(' ')].join(' ').toLowerCase().includes(query)
-    
+
     return tabOk && qOk
   })
 
-  const weather = WEATHER_PRESETS[selectedCity]
+  const currentWeather = weatherData[selectedDistrict] || {
+    temp: '정보없음',
+    humidity: '정보없음',
+    wind: '정보없음',
+    sky: '정보없음',
+    advice: '날씨 정보를 불러오는 중입니다...'
+  }
+
+  const districts = Object.keys(weatherData)
 
   return (
     <div className="br-container">
@@ -64,34 +100,49 @@ const MainView = () => {
       <div className="section">
         <div className="panel">
           <div className="row" style={{ justifyContent: 'space-between', marginBottom: '8px' }}>
-            <strong>날씨 정보</strong>
-            <select 
-              className="input" 
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-            >
-              {cities.map(city => (
-                <option key={city} value={city}>{city}</option>
-              ))}
-            </select>
+            <strong>실시간 날씨 정보</strong>
+            {loading ? (
+              <span className="muted">로딩 중...</span>
+            ) : (
+              <select
+                className="input"
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+              >
+                {districts.map(district => (
+                  <option key={district} value={district}>{district}</option>
+                ))}
+              </select>
+            )}
           </div>
-          <div className="meta">
-            {selectedCity} 현재 {weather.temp}°C · 습도 {weather.humidity}% · 바람 {weather.wind} · 하늘 {weather.sky}
-          </div>
-          <div className="muted" style={{ marginTop: '6px' }}>
-            {weather.advice}
-          </div>
+          {loading ? (
+            <div className="muted">날씨 정보를 불러오는 중...</div>
+          ) : (
+            <>
+              <div className="meta">
+                서울 {selectedDistrict} 현재 {currentWeather.temp}°C · 습도 {currentWeather.humidity}% · 바람 {currentWeather.wind} · 하늘 {currentWeather.sky}
+              </div>
+              <div className="muted" style={{ marginTop: '6px' }}>
+                {currentWeather.advice}
+              </div>
+              {currentWeather.rainfall && parseFloat(currentWeather.rainfall) > 0 && (
+                <div className="muted" style={{ marginTop: '4px' }}>
+                  강수량: {currentWeather.rainfall}mm
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 
       {/* Destinations Section */}
       <div className="section">
         <h3>추천 여행지</h3>
-        
+
         {/* Tabs */}
         <div className="tabs">
           {tabs.map(tab => (
-            <div 
+            <div
               key={tab}
               className={`tab ${tab === activeTab ? 'active' : ''}`}
               onClick={() => setActiveTab(tab)}

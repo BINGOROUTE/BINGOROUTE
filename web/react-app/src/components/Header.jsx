@@ -1,16 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useStore } from '../context/StoreContext'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import { ROUTES } from '../router/routes'
 
 const Header = () => {
-  const { session, setSession } = useStore()
+  const { user, logout, isAuthenticated } = useAuth()
   const [searchQuery, setSearchQuery] = useState('')
-  const navigate = useNavigate()
-
-  const handleLogout = () => {
-    setSession(null)
-    navigate('/')
-  }
 
   const handleSearch = (e) => {
     const query = e.target.value
@@ -20,18 +15,18 @@ const Header = () => {
   }
 
   const rightArea = () => {
-    if (session) {
+    if (isAuthenticated) {
       return (
         <div className="row">
-          <span className="muted">{session.name || session.email}</span>
-          <Link to="/mypage" className="ghost-btn">내 정보</Link>
-          <button className="ghost-btn" onClick={handleLogout}>로그아웃</button>
+          <span className="muted">{user.name || user.email}</span>
+          <Link to={ROUTES.MYPAGE} className="ghost-btn">내 정보</Link>
+          <button className="ghost-btn" onClick={logout}>로그아웃</button>
         </div>
       )
     }
     return (
       <div className="row">
-        <Link to="/login" className="ghost-btn">로그인</Link>
+        <Link to={ROUTES.LOGIN} className="ghost-btn">로그인</Link>
       </div>
     )
   }
@@ -39,7 +34,7 @@ const Header = () => {
   return (
     <header className="br-header">
       <div className="br-container row">
-        <Link to="/" className="brand">
+        <Link to={ROUTES.HOME} className="brand">
           <span className="badge">B</span>
           <span>빙고루트</span>
         </Link>
