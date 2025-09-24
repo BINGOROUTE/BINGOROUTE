@@ -1,4 +1,5 @@
 import Header from './Header'
+import LoginRequiredModal from './auth/LoginRequiredModal'
 
 const Layout = ({ children }) => {
   return (
@@ -7,6 +8,7 @@ const Layout = ({ children }) => {
       <main id="outlet">
         {children}
       </main>
+      <LoginRequiredModal />
     </div>
   )
 }

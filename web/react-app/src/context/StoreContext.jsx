@@ -15,6 +15,8 @@ export const StoreProvider = ({ children }) => {
   const [session, setSession] = useState(null)
   const [wishlist, setWishlist] = useState([])
   const [trips, setTrips] = useState([])
+  // UI states
+  const [loginRequired, setLoginRequired] = useState(false)
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -55,7 +57,9 @@ export const StoreProvider = ({ children }) => {
     wishlist,
     setWishlist,
     trips,
-    setTrips
+    setTrips,
+    loginRequired,
+    setLoginRequired
   }
 
   return (

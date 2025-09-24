@@ -1,11 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { DESTINATIONS } from '../data/destinations'
 import { useStore } from '../context/StoreContext'
+import { useAuth } from '../hooks/useAuth'
 
 const PlaceView = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { wishlist, setWishlist } = useStore()
+  const { isAuthenticated, promptLogin } = useAuth()
   
   const destination = DESTINATIONS.find(d => d.id === id)
   
@@ -25,6 +27,7 @@ const PlaceView = () => {
   const isSaved = wishlist.includes(destination.id)
 
   const toggleSave = () => {
+    if (!isAuthenticated) return
     const newWishlist = isSaved 
       ? wishlist.filter(id => id !== destination.id)
       : [...wishlist, destination.id]
@@ -49,7 +52,13 @@ const PlaceView = () => {
               <h1>{destination.name}</h1>
               <p>{destination.area} · 평점 {destination.rating} · {destination.duration}</p>
             </div>
-            <button className="ghost-btn" onClick={toggleSave} style={{ background: 'rgba(255,255,255,0.2)' }}>
+            <button 
+              className="ghost-btn" 
+              onClick={toggleSave} 
+              style={{ background: 'rgba(255,255,255,0.2)' }}
+              disabled={!isAuthenticated}
+              title={!isAuthenticated ? '로그인 후 이용해주세요' : ''}
+            >
               {isSaved ? '찜 해제' : '찜하기'}
             </button>
           </div>
@@ -90,7 +99,14 @@ const PlaceView = () => {
       </div>
 
       <div className="section">
-        <button className="brand-btn" style={{ width: '100%' }}>
+        <button
+          className="brand-btn"
+          style={{ width: '100%' }}
+          onClick={() => {
+            if (!isAuthenticated) return promptLogin()
+            navigate('/planner')
+          }}
+        >
           여행 계획에 추가하기
         </button>
       </div>
