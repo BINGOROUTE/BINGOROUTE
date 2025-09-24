@@ -4,7 +4,7 @@ export const ROUTES = {
   LOGIN: '/login',
   SIGNUP: '/signup',
   MYPAGE: '/mypage',
-  PLAN: '/plan',
+  PLANNER: '/planner',
   PLACE: '/place/:id',
   PLACE_DETAIL: (id) => `/place/${id}`
 }
@@ -27,8 +27,8 @@ export const ROUTE_META = {
     title: '내 정보',
     requiresAuth: true
   },
-  [ROUTES.PLAN]: {
-    title: '여행 계획',
+  [ROUTES.PLANNER]: {
+    title: 'AI 여행 플래너',
     requiresAuth: true
   },
   [ROUTES.PLACE]: {
