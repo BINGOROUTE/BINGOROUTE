@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import AccessToken
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # 이름은 username 컬럼을 사용
-    name = serializers.CharField(source='username', read_only=True)
+    # 표시용 이름은 first_name을 사용 (중복 허용)
+    name = serializers.CharField(source='first_name', read_only=True)
 
     class Meta:
         model = User
@@ -18,6 +19,13 @@ class SignupSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=8)
     confirm_password = serializers.CharField(write_only=True, min_length=8)
+
+    def validate_name(self, value):
+        name = (value or '').strip()
+        if not name:
+            raise serializers.ValidationError("이름을 입력해주세요.")
+        # 표시용 이름은 중복을 허용합니다.
+        return name
 
     def validate_email(self, value):
         if User.objects.filter(email__iexact=value).exists():
@@ -34,12 +42,19 @@ class SignupSerializer(serializers.Serializer):
         email = validated_data["email"].lower()
         password = validated_data["password"]
 
-        # username에는 '이름', email에는 '이메일' 저장
-        user = User.objects.create_user(
-            username=name,
-            email=email,
-            password=password,
-        )
+        try:
+            # username은 고유해야 하므로 이메일을 사용하고, 표시용 이름은 first_name에 저장합니다.
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=name,
+            )
+        except IntegrityError:
+            # 이메일 중복 등 고유 제약 위반 시
+            raise serializers.ValidationError({
+                "email": "이미 존재하는 이메일입니다.",
+            })
         return user
 
 
