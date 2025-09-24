@@ -1,7 +1,7 @@
 import { useStore } from '../context/StoreContext'
 
 export const useAuth = () => {
-  const { session, setSession } = useStore()
+  const { session, setSession, setLoginRequired } = useStore()
 
   const login = (user) => {
     setSession(user)
@@ -13,10 +13,13 @@ export const useAuth = () => {
 
   const isAuthenticated = !!session
 
+  const promptLogin = () => setLoginRequired(true)
+
   return {
     user: session,
     login,
     logout,
-    isAuthenticated
+    isAuthenticated,
+    promptLogin
   }
 }
