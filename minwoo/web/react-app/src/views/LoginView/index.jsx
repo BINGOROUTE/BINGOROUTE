@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../../context/StoreContext'
 import { login as loginRequest } from '../../services/authService'
-import LoginForm from './LoginForm'
-import SignupPrompt from './SignupPrompt'
+import LoginForm from './LoginForm' // LoginForm 컴포넌트 불러오기~
+import SignupPrompt from './SignupPrompt' // SignupPrompt 컴포넌트 불러오기~
 
 const LoginView = () => {
   const { setSession } = useStore()
@@ -38,7 +38,7 @@ const LoginView = () => {
         <div className="panel" style={{ maxWidth: '400px', width: '100%' }}>
           <h2>로그인</h2>
           <LoginForm
-            email={email}
+            email={email} // LoginForm 컴포넌트에서 불러오기
             password={password}
             error={error}
             isSubmitting={isSubmitting}
@@ -46,7 +46,7 @@ const LoginView = () => {
             onPasswordChange={setPassword}
             onSubmit={handleSubmit}
           />
-          <SignupPrompt />
+          <SignupPrompt />  {/* SignupPrompt 컴포넌트 불러오는 부분!! */}
         </div>
       </div>
     </div>
