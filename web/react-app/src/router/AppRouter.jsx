@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Layout from '../components/Layout'
-import RequireAuth from '../components/auth/RequireAuth'
-import MainView from '../views/MainView'
+import { Layout } from '../components/layout'
+import { RequireAuth } from '../components/features/auth'
+import HomePage from '../pages/HomePage'
 import LoginView from '../views/LoginView'
 import SignupView from '../views/SignupView'
 import MyPageView from '../views/MyPageView'
@@ -13,7 +13,7 @@ const AppRouter = () => {
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<MainView />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginView />} />
           <Route path="/signup" element={<SignupView />} />
           <Route path="/mypage" element={<RequireAuth><MyPageView /></RequireAuth>} />
