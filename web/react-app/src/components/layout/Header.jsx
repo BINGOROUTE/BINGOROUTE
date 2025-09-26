@@ -1,9 +1,9 @@
-import "../styles/header.css";
-import logo from "../assets/BingoRoute.jpeg";
+import "../../styles/header.css";
+import logo from "../../assets/BingoRoute.jpeg";
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
-import { ROUTES } from '../router/routes'
+import { useAuth } from "../../hooks/api/useAuth";
+import { ROUTES } from '../../router/routes'
 
 const Header = () => {
   const { user, logout, isAuthenticated } = useAuth()

@@ -1,8 +1,5 @@
 from django.contrib import admin
-from .models import (
-    Destination, DestinationTag, User, Wishlist, Trip, 
-    CurrentWeather, ShortForecast, MidForecast
-)
+from .models import Destination, DestinationTag, User, Wishlist, Trip
 
 class DestinationTagInline(admin.TabularInline):
     model = DestinationTag
@@ -31,25 +28,4 @@ class TripAdmin(admin.ModelAdmin):
     list_filter = ['duration', 'style', 'created_at']
     search_fields = ['title', 'user__name']
     
-@admin.register(CurrentWeather)
-class CurrentWeatherAdmin(admin.ModelAdmin):
-    list_display = ['region', 'date', 'time', 'temperature', 'humidity', 'wind_speed', 'rainfall']
-    list_filter = ['region', 'date']
-    search_fields = ['region']
-    ordering = ['-date', '-time']
-
-@admin.register(ShortForecast)
-class ShortForecastAdmin(admin.ModelAdmin):
-    list_display = ['region', 'date', 'forecast_time', 'temperature', 'wind_speed', 'precipitation']
-    list_filter = ['region', 'date']
-    search_fields = ['region']
-    ordering = ['-date', 'forecast_time']
-
-@admin.register(MidForecast)
-class MidForecastAdmin(admin.ModelAdmin):
-    list_display = ['region', 'date', 'period', 'weather_condition', 'rain_probability', 'min_temperature', 'max_temperature']
-    list_filter = ['region', 'date', 'period']
-    search_fields = ['region', 'weather_condition']
-    ordering = ['-date', 'period']
-
-# WeatherDataAdmin 제거됨 - 새로운 테이블 구조 사용
+# 날씨 데이터는 CSV 파일로 관리됩니다

@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { DESTINATIONS } from '../data/destinations'
 import { useStore } from '../context/StoreContext'
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from "../hooks/api/useAuth";
+
 
 const PlaceView = () => {
   const { id } = useParams()

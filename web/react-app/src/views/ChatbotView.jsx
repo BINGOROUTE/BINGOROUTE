@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
-import ChatHeader from '../components/chat/ChatHeader'
-import ChatMessage from '../components/chat/ChatMessage'
-import QuickReplies from '../components/chat/QuickReplies'
-import ChatInput from '../components/chat/ChatInput'
+import { ChatHeader, ChatMessage, QuickReplies, ChatInput } from '../components/features/chat'
 
 const INITIAL_CHIPS = [
   '역사와 문화 탐방',
