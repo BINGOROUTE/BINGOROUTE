@@ -2,43 +2,125 @@ import datetime
 import pandas as pd
 import os
 from django.conf import settings
-from django.utils import timezone
-from ..models import CurrentWeather, ShortForecast, MidForecast
 from .weather_api import SEOUL_GU, get_current_weather, get_short_forecast, get_mid_forecast
 
 
 class WeatherService:
-    """날씨 데이터 수집 및 DB 저장 서비스"""
+    """날씨 데이터 수집 및 CSV 저장/조회 서비스"""
     
     # collect_and_save_weather_data 메서드 제거됨 - collect_save_and_load 사용
     
     @staticmethod
     def get_current_weather_summary():
-        """현재 날씨 요약 정보 반환 (새로운 테이블 구조 사용)"""
-        today = datetime.date.today().strftime("%Y%m%d")
-        
-        # 새로운 CurrentWeather 테이블에서 데이터 조회
-        current_weather = CurrentWeather.objects.filter(
-            date=today
-        ).order_by('-time')
-        
-        weather_by_region = {}
-        
-        for weather in current_weather:
-            region = weather.region
+        """현재 시간대 날씨 정보 반환 (단기 예보에서 현재 시간대 데이터 추출)"""
+        try:
+            # 최신 CSV 파일 찾기
+            csv_file = WeatherService._get_latest_weather_csv()
+            if not csv_file:
+                # CSV 파일이 없으면 실시간으로 수집
+                WeatherService.collect_and_save_to_csv()
+                csv_file = WeatherService._get_latest_weather_csv()
+                
+            if not csv_file:
+                return {}
             
-            # 각 구별로 가장 최근 데이터만 사용
-            if region not in weather_by_region:
-                weather_by_region[region] = {
-                    '기온(℃)': str(weather.temperature) if weather.temperature is not None else '정보없음',
-                    '습도(%)': str(weather.humidity) if weather.humidity is not None else '정보없음',
-                    '풍속(m/s)': str(weather.wind_speed) if weather.wind_speed is not None else '정보없음',
-                    '강수량(mm)': str(weather.rainfall) if weather.rainfall is not None else '0'
-                }
-        
-        return weather_by_region
+            # CSV에서 단기 예보 데이터 읽기
+            df = pd.read_csv(csv_file)
+            
+            # 서울 시간대 기준으로 현재 시간 계산
+            import pytz
+            seoul_tz = pytz.timezone('Asia/Seoul')
+            now_seoul = datetime.datetime.now(seoul_tz)
+            today = now_seoul.strftime("%Y%m%d")
+            current_hour = now_seoul.hour
+            
+            # 현재 시간에 가장 가까운 예보 시간 찾기 (3시간 간격)
+            forecast_hours = [0, 3, 6, 9, 12, 15, 18, 21]
+            closest_hour = min(forecast_hours, key=lambda x: abs(x - current_hour))
+            target_time = f"{closest_hour:02d}00"
+            
+            # 단기 예보에서 현재 시간대 데이터 필터링
+            current_df = df[
+                (df['타입'] == '단기') & 
+                (df['날짜'].astype(str) == today) &
+                (df['시간'].astype(str) == target_time)
+            ]
+            
+            weather_by_region = {}
+            
+            for _, row in current_df.iterrows():
+                region = row['지역']
+                category = row['항목']
+                value = row['값']
+                
+                if region not in weather_by_region:
+                    weather_by_region[region] = {
+                        'forecast_time': target_time,
+                        'seoul_time': now_seoul.strftime("%Y-%m-%d %H:%M")
+                    }
+                
+                # 항목별 매핑
+                if category == 'TMP':
+                    weather_by_region[region]['기온(℃)'] = str(value) if pd.notna(value) else '정보없음'
+                elif category == 'WSD':
+                    weather_by_region[region]['풍속(m/s)'] = str(value) if pd.notna(value) else '정보없음'
+                elif category == 'PCP':
+                    weather_by_region[region]['강수량(mm)'] = str(value) if pd.notna(value) else '0'
+            
+            return weather_by_region
+            
+        except Exception as e:
+            print(f"❌ 현재 날씨 조회 오류: {e}")
+            return {}
     
-    # get_weather_forecast 메서드 제거됨 - 새로운 테이블 구조 사용
+    @staticmethod
+    def get_weather_forecast(region=None, days=3):
+        """날씨 예보 조회 (CSV에서 읽기)"""
+        try:
+            # 최신 CSV 파일 찾기
+            csv_file = WeatherService._get_latest_weather_csv()
+            if not csv_file:
+                # CSV 파일이 없으면 실시간으로 수집
+                WeatherService.collect_and_save_to_csv()
+                csv_file = WeatherService._get_latest_weather_csv()
+                
+            if not csv_file:
+                return []
+            
+            # CSV에서 예보 데이터 읽기
+            df = pd.read_csv(csv_file)
+            
+            # 단기 예보 데이터 필터링
+            forecast_df = df[df['타입'] == '단기']
+            
+            if region:
+                forecast_df = forecast_df[forecast_df['지역'] == region]
+            
+            # 날짜 범위 필터링
+            today = datetime.date.today()
+            end_date = (today + datetime.timedelta(days=days)).strftime("%Y%m%d")
+            
+            forecast_df = forecast_df[
+                (forecast_df['날짜'].astype(str) >= today.strftime("%Y%m%d")) &
+                (forecast_df['날짜'].astype(str) <= end_date)
+            ]
+            
+            # 결과 정리
+            forecast_data = []
+            for _, row in forecast_df.iterrows():
+                forecast_data.append({
+                    '지역': row['지역'],
+                    '날짜': row['날짜'],
+                    '시간': row['시간'],
+                    '항목': row['항목'],
+                    '값': row['값']
+                })
+            
+            return forecast_data
+            
+        except Exception as e:
+            print(f"❌ 날씨 예보 조회 오류: {e}")
+            return []
     
     @staticmethod
     def collect_and_save_to_csv():
@@ -52,24 +134,11 @@ class WeatherService:
         today = datetime.date.today().strftime("%Y%m%d")
         short_data = []
         
-        # 1. 서울 구별 현재 날씨 + 단기예보 수집
+        # 1. 서울 구별 단기예보 수집 (현재 시간 포함)
         for gu, (nx, ny) in SEOUL_GU.items():
             print(f"📍 {gu} 데이터 수집 중...")
             
-            # 현재 날씨
-            current_data = get_current_weather(nx, ny)
-            if current_data:
-                for category, value in current_data.items():
-                    short_data.append({
-                        "지역": gu,
-                        "타입": "현재",
-                        "날짜": today,
-                        "시간": datetime.datetime.now().strftime("%H%M"),
-                        "항목": category,
-                        "값": str(value)
-                    })
-            
-            # 단기예보
+            # 단기예보 (현재 시간부터 3일간)
             forecast_data = get_short_forecast(nx, ny)
             for forecast in forecast_data:
                 short_data.append({
@@ -115,213 +184,7 @@ class WeatherService:
             'mid_count': len(mid_formatted)
         }
     
-    @staticmethod
-    def load_csv_to_db(csv_file_path, replace_all=False):
-        """CSV 파일을 읽어서 새로운 테이블 구조로 저장"""
-        if not os.path.exists(csv_file_path):
-            raise FileNotFoundError(f"CSV 파일을 찾을 수 없습니다: {csv_file_path}")
-        
-        print(f"📄 CSV 파일 로드 중: {csv_file_path}")
-        df = pd.read_csv(csv_file_path)
-        
-        if df.empty:
-            print("❌ CSV 파일이 비어있습니다.")
-            return 0
-        
-        # 날짜별로 기존 데이터 삭제
-        dates_in_csv = df['날짜'].unique()
-        
-        # 타입별로 데이터 분류 및 저장
-        current_records = []
-        short_records = []
-        mid_records = []
-        
-        for _, row in df.iterrows():
-            region = row['지역']
-            weather_type = row['타입']
-            date = str(row['날짜'])
-            time = str(row['시간'])
-            category = row['항목']
-            value = str(row['값'])
-            
-            if weather_type == '현재':
-                # 현재 날씨 데이터 처리
-                WeatherService._process_current_weather(
-                    current_records, region, date, time, category, value
-                )
-            elif weather_type == '단기':
-                # 단기 예보 데이터 처리
-                WeatherService._process_short_forecast(
-                    short_records, region, date, time, category, value
-                )
-            elif weather_type == '중기':
-                # 중기 예보 데이터 처리
-                WeatherService._process_mid_forecast(
-                    mid_records, region, date, time, category, value
-                )
-        
-        total_saved = 0
-        
-        # 기존 데이터 삭제 및 새 데이터 저장
-        if current_records:
-            CurrentWeather.objects.filter(date__in=dates_in_csv).delete()
-            CurrentWeather.objects.bulk_create(current_records, ignore_conflicts=True)
-            total_saved += len(current_records)
-            print(f"✅ 현재 날씨 저장: {len(current_records)}건")
-        
-        if short_records:
-            ShortForecast.objects.filter(date__in=dates_in_csv).delete()
-            ShortForecast.objects.bulk_create(short_records, ignore_conflicts=True)
-            total_saved += len(short_records)
-            print(f"✅ 단기 예보 저장: {len(short_records)}건")
-        
-        if mid_records:
-            MidForecast.objects.filter(date__in=dates_in_csv).delete()
-            MidForecast.objects.bulk_create(mid_records, ignore_conflicts=True)
-            total_saved += len(mid_records)
-            print(f"✅ 중기 예보 저장: {len(mid_records)}건")
-        
-        return total_saved
-    
-    @staticmethod
-    def _process_current_weather(records, region, date, time, category, value):
-        """현재 날씨 데이터 처리"""
-        # 같은 지역, 날짜, 시간의 기존 레코드 찾기
-        existing_record = None
-        for record in records:
-            if (record.region == region and record.date == date and record.time == time):
-                existing_record = record
-                break
-        
-        if not existing_record:
-            existing_record = CurrentWeather(
-                region=region,
-                date=date,
-                time=time
-            )
-            records.append(existing_record)
-        
-        # 카테고리별 값 설정
-        try:
-            if category == '기온(℃)':
-                existing_record.temperature = float(value)
-            elif category == '습도(%)':
-                existing_record.humidity = int(value)
-            elif category == '풍속(m/s)':
-                existing_record.wind_speed = float(value)
-            elif category == '강수량(mm)':
-                existing_record.rainfall = float(value)
-        except (ValueError, TypeError):
-            print(f"⚠️ 값 변환 실패: {category} = {value}")
-    
-    @staticmethod
-    def _process_short_forecast(records, region, date, forecast_time, category, value):
-        """단기 예보 데이터 처리"""
-        # 같은 지역, 날짜, 시간의 기존 레코드 찾기
-        existing_record = None
-        for record in records:
-            if (record.region == region and record.date == date and record.forecast_time == forecast_time):
-                existing_record = record
-                break
-        
-        if not existing_record:
-            existing_record = ShortForecast(
-                region=region,
-                date=date,
-                forecast_time=forecast_time
-            )
-            records.append(existing_record)
-        
-        # 카테고리별 값 설정
-        try:
-            if category == 'TMP':
-                existing_record.temperature = float(value)
-            elif category == 'WSD':
-                existing_record.wind_speed = float(value)
-            elif category == 'PCP':
-                existing_record.precipitation = value
-        except (ValueError, TypeError):
-            print(f"⚠️ 값 변환 실패: {category} = {value}")
-    
-    @staticmethod
-    def _process_mid_forecast(records, region, date, period, category, value):
-        """중기 예보 데이터 처리"""
-        # 같은 지역, 날짜, 구간의 기존 레코드 찾기
-        existing_record = None
-        for record in records:
-            if (record.region == region and record.date == date and record.period == period):
-                existing_record = record
-                break
-        
-        if not existing_record:
-            existing_record = MidForecast(
-                region=region,
-                date=date,
-                period=period
-            )
-            records.append(existing_record)
-        
-        # 카테고리별 값 설정
-        try:
-            if category == '날씨':
-                existing_record.weather_condition = value
-            elif category == '강수확률(%)':
-                existing_record.rain_probability = int(value) if value != '-' else None
-            elif category == '최저기온(℃)':
-                existing_record.min_temperature = float(value) if value != '-' else None
-            elif category == '최고기온(℃)':
-                existing_record.max_temperature = float(value) if value != '-' else None
-        except (ValueError, TypeError):
-            print(f"⚠️ 값 변환 실패: {category} = {value}")
-    
-    @staticmethod
-    def collect_save_and_load():
-        """전체 파이프라인: API 수집 → CSV 저장 → DB 로드 → CSV 정리"""
-        print("🚀 전체 날씨 데이터 파이프라인 시작...")
-        
-        # 1. 기존 CSV 파일들 정리 (1일 이상 된 파일)
-        WeatherService.cleanup_old_csv_files(days=1)
-        
-        # 2. API 수집 및 CSV 저장
-        csv_result = WeatherService.collect_and_save_to_csv()
-        
-        total_loaded = 0
-        csv_files_to_delete = []
-        
-        # 3. 기존 전체 날씨 데이터 삭제 (새로운 테이블들)
-        current_count = CurrentWeather.objects.all().count()
-        short_count = ShortForecast.objects.all().count()
-        mid_count = MidForecast.objects.all().count()
-        
-        CurrentWeather.objects.all().delete()
-        ShortForecast.objects.all().delete()
-        MidForecast.objects.all().delete()
-        
-        total_deleted = current_count + short_count + mid_count
-        print(f"🗑️ 기존 전체 날씨 데이터 삭제 완료: {total_deleted}건 (현재:{current_count}, 단기:{short_count}, 중기:{mid_count})")
-        
-        # 4. CSV 파일들을 DB에 로드 (전체 교체 모드)
-        if csv_result['short_file']:
-            count = WeatherService.load_csv_to_db(csv_result['short_file'], replace_all=False)  # 이미 삭제했으므로 False
-            total_loaded += count
-            csv_files_to_delete.append(csv_result['short_file'])
-        
-        if csv_result['mid_file']:
-            count = WeatherService.load_csv_to_db(csv_result['mid_file'], replace_all=False)  # 이미 삭제했으므로 False
-            total_loaded += count
-            csv_files_to_delete.append(csv_result['mid_file'])
-        
-        # 4. DB 로드 완료 후 CSV 파일 삭제 (선택사항)
-        # WeatherService.delete_csv_files(csv_files_to_delete)
-        
-        print(f"🎉 파이프라인 완료! 총 {total_loaded}건 DB 저장")
-        
-        return {
-            'csv_files': [csv_result['short_file'], csv_result['mid_file']],
-            'total_records': total_loaded,
-            'short_count': csv_result['short_count'],
-            'mid_count': csv_result['mid_count']
-        }
+
     
     @staticmethod
     def cleanup_old_csv_files(days=7):
@@ -360,62 +223,209 @@ class WeatherService:
                 except Exception as e:
                     print(f"❌ CSV 파일 삭제 실패: {file_path} - {e}")
     
+
+    
     @staticmethod
-    def export_to_csv(filename=None):
-        """새로운 테이블 구조의 날씨 데이터를 CSV로 내보내기"""
-        if filename is None:
-            api_data_dir = os.path.join(settings.BASE_DIR, 'api_data')
-            os.makedirs(api_data_dir, exist_ok=True)
-            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = os.path.join(api_data_dir, f"weather_export_{timestamp}.csv")
+    def _get_latest_weather_csv():
+        """가장 최신의 날씨 CSV 파일 경로 반환"""
+        api_data_dir = os.path.join(settings.BASE_DIR, 'api_data')
+        if not os.path.exists(api_data_dir):
+            return None
         
-        # 새로운 테이블들에서 데이터 수집
-        export_data = []
+        csv_files = []
+        for filename in os.listdir(api_data_dir):
+            if filename.startswith('seoul_short_') and filename.endswith('.csv'):
+                file_path = os.path.join(api_data_dir, filename)
+                csv_files.append((file_path, os.path.getctime(file_path)))
         
-        # 현재 날씨
-        for weather in CurrentWeather.objects.all():
-            export_data.append({
-                '지역': weather.region,
-                '타입': '현재',
-                '날짜': weather.date,
-                '시간': weather.time,
-                '온도': weather.temperature,
-                '습도': weather.humidity,
-                '풍속': weather.wind_speed,
-                '강수량': weather.rainfall,
-                '생성일시': weather.created_at
-            })
+        if not csv_files:
+            return None
         
-        # 단기 예보
-        for forecast in ShortForecast.objects.all():
-            export_data.append({
-                '지역': forecast.region,
-                '타입': '단기',
-                '날짜': forecast.date,
-                '시간': forecast.forecast_time,
-                '온도': forecast.temperature,
-                '풍속': forecast.wind_speed,
-                '강수량': forecast.precipitation,
-                '생성일시': forecast.created_at
-            })
+        # 가장 최신 파일 반환
+        latest_file = max(csv_files, key=lambda x: x[1])
+        return latest_file[0]
+    
+    @staticmethod
+    def get_mid_forecast_for_algorithm():
+        """추천 알고리즘용 중기예보 데이터 조회 (CSV에서 읽기)"""
+        try:
+            # 최신 중기예보 CSV 파일 찾기
+            csv_file = WeatherService._get_latest_mid_csv()
+            if not csv_file:
+                # CSV 파일이 없으면 실시간으로 수집
+                WeatherService.collect_and_save_to_csv()
+                csv_file = WeatherService._get_latest_mid_csv()
+                
+            if not csv_file:
+                return []
+            
+            # CSV에서 중기예보 데이터 읽기
+            df = pd.read_csv(csv_file)
+            
+            # 향후 7일간의 중기예보 데이터 필터링
+            today = datetime.date.today()
+            end_date = (today + datetime.timedelta(days=7)).strftime("%Y%m%d")
+            
+            mid_df = df[
+                (df['타입'] == '중기') &
+                (df['날짜'].astype(str) >= today.strftime("%Y%m%d")) &
+                (df['날짜'].astype(str) <= end_date)
+            ]
+            
+            # 결과 정리
+            forecast_data = []
+            for _, row in mid_df.iterrows():
+                forecast_data.append({
+                    'region': row['지역'],
+                    'date': row['날짜'],
+                    'period': row['시간'],
+                    'weather_condition': row['값'] if row['항목'] == '날씨' else None,
+                    'rain_probability': row['값'] if row['항목'] == '강수확률(%)' else None,
+                    'min_temperature': row['값'] if row['항목'] == '최저기온(℃)' else None,
+                    'max_temperature': row['값'] if row['항목'] == '최고기온(℃)' else None
+                })
+            
+            return forecast_data
+            
+        except Exception as e:
+            print(f"❌ 중기예보 조회 오류: {e}")
+            return []
+    
+    @staticmethod
+    def _get_latest_mid_csv():
+        """가장 최신의 중기예보 CSV 파일 경로 반환"""
+        api_data_dir = os.path.join(settings.BASE_DIR, 'api_data')
+        if not os.path.exists(api_data_dir):
+            return None
         
-        # 중기 예보
-        for forecast in MidForecast.objects.all():
-            export_data.append({
-                '지역': forecast.region,
-                '타입': '중기',
-                '날짜': forecast.date,
-                '구간': forecast.period,
-                '날씨상태': forecast.weather_condition,
-                '강수확률': forecast.rain_probability,
-                '최저기온': forecast.min_temperature,
-                '최고기온': forecast.max_temperature,
-                '생성일시': forecast.created_at
-            })
+        csv_files = []
+        for filename in os.listdir(api_data_dir):
+            if filename.startswith('seoul_mid_') and filename.endswith('.csv'):
+                file_path = os.path.join(api_data_dir, filename)
+                csv_files.append((file_path, os.path.getctime(file_path)))
         
-        df = pd.DataFrame(export_data)
-        if not df.empty:
-            df.to_csv(filename, index=False, encoding='utf-8-sig')
-            print(f"✅ CSV 내보내기 완료: {filename} ({len(export_data)}건)")
+        if not csv_files:
+            return None
         
-        return filename
+        # 가장 최신 파일 반환
+        latest_file = max(csv_files, key=lambda x: x[1])
+        return latest_file[0]
+    
+    @staticmethod
+    def get_weather_statistics():
+        """날씨 데이터 통계 조회 (CSV 기반)"""
+        try:
+            short_csv = WeatherService._get_latest_weather_csv()
+            mid_csv = WeatherService._get_latest_mid_csv()
+            
+            short_count = 0
+            mid_count = 0
+            
+            if short_csv and os.path.exists(short_csv):
+                df = pd.read_csv(short_csv)
+                short_count = len(df[df['타입'] == '단기'])
+            
+            if mid_csv and os.path.exists(mid_csv):
+                df = pd.read_csv(mid_csv)
+                mid_count = len(df[df['타입'] == '중기'])
+            
+            return {
+                'short_forecast': short_count,
+                'mid_forecast': mid_count,
+                'legacy_data': 0,
+                'total': short_count + mid_count
+            }
+            
+        except Exception as e:
+            print(f"❌ 통계 조회 오류: {e}")
+            return {
+                'short_forecast': 0,
+                'mid_forecast': 0,
+                'legacy_data': 0,
+                'total': 0
+            }
+    
+    @staticmethod
+    def get_weather_by_time(target_date=None, target_time=None):
+        """특정 시간대의 서울 구별 날씨 조회"""
+        try:
+            # 최신 CSV 파일 찾기
+            csv_file = WeatherService._get_latest_weather_csv()
+            if not csv_file:
+                return []
+            
+            # CSV에서 단기 예보 데이터 읽기
+            df = pd.read_csv(csv_file)
+            
+            # 서울 시간대 기준으로 기본값 설정
+            import pytz
+            seoul_tz = pytz.timezone('Asia/Seoul')
+            now_seoul = datetime.datetime.now(seoul_tz)
+            
+            if not target_date:
+                target_date = now_seoul.strftime("%Y%m%d")
+            
+            if not target_time:
+                current_hour = now_seoul.hour
+                # 3시간 간격으로 가장 가까운 시간 찾기
+                forecast_hours = [0, 3, 6, 9, 12, 15, 18, 21]
+                closest_hour = min(forecast_hours, key=lambda x: abs(x - current_hour))
+                target_time = f"{closest_hour:02d}00"
+            
+            # 해당 시간대 데이터 필터링
+            time_df = df[
+                (df['타입'] == '단기') & 
+                (df['날짜'].astype(str) == str(target_date)) &
+                (df['시간'].astype(str) == str(target_time))
+            ]
+            
+            # 구별로 그룹화
+            weather_by_region = {}
+            
+            for _, row in time_df.iterrows():
+                region = row['지역']
+                category = row['항목']
+                value = row['값']
+                
+                if region not in weather_by_region:
+                    weather_by_region[region] = {
+                        'region': region,
+                        'date': target_date,
+                        'time': target_time,
+                        'formatted_time': f"{target_time[:2]}:{target_time[2:]}",
+                        'formatted_date': WeatherService._format_date(target_date)
+                    }
+                
+                # 항목별 데이터 매핑
+                if category == 'TMP':
+                    weather_by_region[region]['temperature'] = value
+                elif category == 'WSD':
+                    weather_by_region[region]['wind_speed'] = value
+                elif category == 'PCP':
+                    weather_by_region[region]['precipitation'] = value
+            
+            return list(weather_by_region.values())
+            
+        except Exception as e:
+            print(f"❌ 시간대별 날씨 조회 오류: {e}")
+            return []
+    
+    @staticmethod
+    def _format_date(date_string):
+        """날짜 포맷팅 유틸리티"""
+        if not date_string or len(date_string) != 8:
+            return date_string
+        
+        year = date_string[:4]
+        month = date_string[4:6]
+        day = date_string[6:8]
+        
+        today = datetime.date.today()
+        target_date = datetime.date(int(year), int(month), int(day))
+        
+        if target_date == today:
+            return '오늘'
+        elif target_date == today + datetime.timedelta(days=1):
+            return '내일'
+        else:
+            return f"{month}/{day}"
