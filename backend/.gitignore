@@ -43,8 +43,8 @@ venv/
 Thumbs.db
 
 # CSV files (generated data) - but keep api_data folder structure
-*.csv
-!api_data/.gitkeep
+# *.csv <- api 복구시 원상복구
+# !api_data/.gitkeep <- api 복구시 원상복구
 
 # Media files
 media/
