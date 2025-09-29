@@ -24,10 +24,11 @@ class Command(BaseCommand):
                 # 오래된 CSV 파일들 정리
                 days = options.get('days', 7)
                 self.stdout.write(f'🗑️ {days}일 이상 된 CSV 파일들을 정리하는 중...')
-                WeatherService.cleanup_old_csv_files(days=days)
-                self.stdout.write(
-                    self.style.SUCCESS('✅ CSV 파일 정리 완료')
-                )
+                # WeatherService.cleanup_old_csv_files(days=days)
+                # self.stdout.write(
+                    # self.style.SUCCESS('✅ CSV 파일 정리 완료')
+                # )
+                return # 추후 주석 다시 지울 때 삭제 예정
             else:
                 # 날씨 데이터 수집 및 CSV 저장 (기본)
                 self.stdout.write('🌤️ 날씨 데이터 수집 및 CSV 저장 중...')

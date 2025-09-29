@@ -192,37 +192,39 @@ class WeatherService:
         api_data_dir = os.path.join(settings.BASE_DIR, 'api_data')
         if not os.path.exists(api_data_dir):
             return
+        return # 추후 주석처리 원복할 때 삭제 예정 
         
-        cutoff_time = datetime.datetime.now() - datetime.timedelta(days=days)
-        deleted_count = 0
-        
-        for filename in os.listdir(api_data_dir):
-            if filename.endswith('.csv') and filename != '.gitkeep':
-                file_path = os.path.join(api_data_dir, filename)
-                file_time = datetime.datetime.fromtimestamp(os.path.getctime(file_path))
-                
-                if file_time < cutoff_time:
-                    try:
-                        os.remove(file_path)
-                        deleted_count += 1
-                        print(f"🗑️ 오래된 CSV 파일 삭제: {filename}")
-                    except Exception as e:
-                        print(f"❌ CSV 파일 삭제 실패: {filename} - {e}")
-        
-        if deleted_count > 0:
-            print(f"✅ 총 {deleted_count}개의 오래된 CSV 파일을 정리했습니다.")
+        # cutoff_time = datetime.datetime.now() - datetime.timedelta(days=days)
+        # deleted_count = 0
+        #
+        # for filename in os.listdir(api_data_dir):
+            # if filename.endswith('.csv') and filename != '.gitkeep':
+                # file_path = os.path.join(api_data_dir, filename)
+                # file_time = datetime.datetime.fromtimestamp(os.path.getctime(file_path))
+                #
+                # if file_time < cutoff_time:
+                    # try:
+                        # os.remove(file_path)
+                        # deleted_count += 1
+                        # print(f"🗑️ 오래된 CSV 파일 삭제: {filename}")
+                    # except Exception as e:
+                        # print(f"❌ CSV 파일 삭제 실패: {filename} - {e}")
+        #
+        # if deleted_count > 0:
+            # print(f"✅ 총 {deleted_count}개의 오래된 CSV 파일을 정리했습니다.")
     
     @staticmethod
     def delete_csv_files(file_paths):
         """지정된 CSV 파일들 삭제"""
-        for file_path in file_paths:
-            if file_path and os.path.exists(file_path):
-                try:
-                    os.remove(file_path)
-                    print(f"🗑️ CSV 파일 삭제: {os.path.basename(file_path)}")
-                except Exception as e:
-                    print(f"❌ CSV 파일 삭제 실패: {file_path} - {e}")
-    
+        return # 추후 주석처리 원복할 때 삭제 예정 
+        # for file_path in file_paths:
+            # if file_path and os.path.exists(file_path):
+                # try:
+                    # os.remove(file_path)
+                    # print(f"🗑️ CSV 파일 삭제: {os.path.basename(file_path)}")
+                # except Exception as e:
+                    # print(f"❌ CSV 파일 삭제 실패: {file_path} - {e}")
+    #
 
     
     @staticmethod

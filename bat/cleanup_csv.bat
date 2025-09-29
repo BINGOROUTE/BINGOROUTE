@@ -13,13 +13,16 @@ set /p choice="선택 (1-4): "
 
 if "%choice%"=="1" (
     echo 7일 이상 된 CSV 파일을 삭제합니다...
-    docker exec -it bingoroute_backend python manage.py shell -c "from destinations.services.weather_service import WeatherService; WeatherService.cleanup_old_csv_files(days=7)"
+    echo CSV cleanup is temporarily disabled; keeping existing files.
+    REM docker exec -it bingoroute_backend python manage.py shell -c "from destinations.services.weather_service import WeatherService; WeatherService.cleanup_old_csv_files(days=7)"
 ) else if "%choice%"=="2" (
     echo 1일 이상 된 CSV 파일을 삭제합니다...
-    docker exec -it bingoroute_backend python manage.py shell -c "from destinations.services.weather_service import WeatherService; WeatherService.cleanup_old_csv_files(days=1)"
+    echo CSV cleanup is temporarily disabled; keeping existing files.
+    REM docker exec -it bingoroute_backend python manage.py shell -c "from destinations.services.weather_service import WeatherService; WeatherService.cleanup_old_csv_files(days=1)"
 ) else if "%choice%"=="3" (
     echo 모든 CSV 파일을 삭제합니다...
-    docker exec -it bingoroute_backend python manage.py shell -c "from destinations.services.weather_service import WeatherService; WeatherService.cleanup_old_csv_files(days=0)"
+    echo CSV cleanup is temporarily disabled; keeping existing files.
+    REM docker exec -it bingoroute_backend python manage.py shell -c "from destinations.services.weather_service import WeatherService; WeatherService.cleanup_old_csv_files(days=0)"
 ) else if "%choice%"=="4" (
     echo 현재 CSV 파일 목록:
     docker exec -it bingoroute_backend ls -la /app/api_data/
