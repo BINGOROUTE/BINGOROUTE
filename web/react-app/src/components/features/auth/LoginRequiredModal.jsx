@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useStore } from '../../context/StoreContext'
+import { useStore } from '../../../context/StoreContext'
 
 const LoginRequiredModal = () => {
   const navigate = useNavigate()
@@ -34,4 +34,3 @@ const LoginRequiredModal = () => {
 }
 
 export default LoginRequiredModal
-

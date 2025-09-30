@@ -1,4 +1,4 @@
-import { useStore } from '../context/StoreContext'
+import { useStore } from '../../context/StoreContext'
 
 export const useAuth = () => {
   const { session, setSession, setLoginRequired } = useStore()

@@ -1,4 +1,4 @@
-import DestinationCard from '../../components/DestinationCard'
+import DestinationCard from './DestinationCard'
 
 const DestinationsGrid = ({ items = [] }) => {
   return (
@@ -11,4 +11,3 @@ const DestinationsGrid = ({ items = [] }) => {
 }
 
 export default DestinationsGrid
-

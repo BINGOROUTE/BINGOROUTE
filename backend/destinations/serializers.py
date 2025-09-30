@@ -1,8 +1,5 @@
 from rest_framework import serializers
-from .models import (
-    Destination, DestinationTag, User, Wishlist, Trip, 
-    CurrentWeather, ShortForecast, MidForecast
-)
+from .models import Destination, DestinationTag, User, Wishlist, Trip
 
 class DestinationTagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,28 +41,4 @@ class TripSerializer(serializers.ModelSerializer):
             'id', 'title', 'duration', 'style', 'budget', 
             'companions', 'created_at'
         ]
-class CurrentWeatherSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CurrentWeather
-        fields = [
-            'id', 'region', 'date', 'time', 'temperature', 
-            'humidity', 'wind_speed', 'rainfall', 'created_at'
-        ]
-
-class ShortForecastSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ShortForecast
-        fields = [
-            'id', 'region', 'date', 'forecast_time', 'temperature',
-            'wind_speed', 'precipitation', 'created_at'
-        ]
-
-class MidForecastSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MidForecast
-        fields = [
-            'id', 'region', 'date', 'period', 'weather_condition',
-            'rain_probability', 'min_temperature', 'max_temperature', 'created_at'
-        ]
-
-# WeatherDataSerializer 제거됨 - 새로운 테이블 구조 사용
+# 날씨 데이터는 CSV 파일로 관리되므로 Serializer가 필요하지 않습니다

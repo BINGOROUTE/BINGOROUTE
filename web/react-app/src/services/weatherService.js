@@ -26,7 +26,7 @@ export const weatherService = {
       if (region) params.append('region', region)
       params.append('days', days.toString())
       
-      const response = await fetch(`${API_BASE_URL}/api/weather/short-forecast/?${params}`)
+      const response = await fetch(`${API_BASE_URL}/api/weather/forecast/?${params}`)
       const data = await response.json()
       
       if (data.success) {
@@ -80,12 +80,34 @@ export const weatherService = {
     }
   },
 
+  // 특정 시간대의 서울 구별 날씨 조회
+  async getWeatherByTime(date = null, time = null) {
+    try {
+      const params = new URLSearchParams()
+      if (date) params.append('date', date)
+      if (time) params.append('time', time)
+      
+      const response = await fetch(`${API_BASE_URL}/api/weather/by-time/?${params}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        return data.data
+      } else {
+        console.error('시간대별 날씨 조회 실패:', data.error)
+        return []
+      }
+    } catch (error) {
+      console.error('시간대별 날씨 API 호출 오류:', error)
+      return []
+    }
+  },
+
   // 레거시 - 기존 호환성을 위한 메서드
   async getWeatherForecast(region = null, days = 3) {
     return this.getShortForecast(region, days)
   },
 
-  // 서울 구별 현재 날씨 데이터를 가공해서 반환
+  // 서울 구별 현재 시간대 날씨 데이터를 가공해서 반환
   formatSeoulWeatherData(weatherData) {
     if (!weatherData) return {}
 
@@ -94,11 +116,12 @@ export const weatherService = {
     Object.keys(weatherData).forEach(region => {
       const regionData = weatherData[region]
       
-      // 기온, 습도, 풍속, 강수량 데이터 추출
+      // 기온, 풍속, 강수량 데이터 추출
       const temp = regionData['기온(℃)'] || '정보없음'
-      const humidity = regionData['습도(%)'] || '정보없음'
       const windSpeed = regionData['풍속(m/s)'] || '정보없음'
       const rainfall = regionData['강수량(mm)'] || '0'
+      const forecastTime = regionData['forecast_time'] || '정보없음'
+      const seoulTime = regionData['seoul_time'] || '정보없음'
       
       // 날씨 상태 판단 (간단한 로직)
       let sky = '맑음'
@@ -107,21 +130,23 @@ export const weatherService = {
       if (parseFloat(rainfall) > 0) {
         sky = '비'
         advice = '우산을 챙기세요 ☔'
-      } else if (parseFloat(humidity) > 80) {
-        sky = '흐림'
-        advice = '습도가 높아요 💧'
       } else if (parseFloat(windSpeed) > 3) {
         sky = '바람'
         advice = '바람이 강해요 💨'
       }
       
+      // 시간 포맷팅
+      const formattedTime = this.formatForecastTime(forecastTime)
+      
       seoulDistricts[region] = {
         temp: temp,
-        humidity: humidity,
         wind: `${windSpeed} m/s`,
         sky: sky,
         advice: advice,
-        rainfall: rainfall
+        rainfall: rainfall,
+        forecastTime: formattedTime,
+        seoulTime: seoulTime,
+        timeInfo: `${formattedTime} 예보`
       }
     })
     
@@ -194,6 +219,77 @@ export const weatherService = {
       return '내일'
     } else {
       return `${month}/${day}`
+    }
+  },
+
+  // 예보 시간 포맷팅 유틸리티
+  formatForecastTime(timeString) {
+    if (!timeString || timeString.length !== 4) return timeString
+    
+    const hour = timeString.substring(0, 2)
+    const minute = timeString.substring(2, 4)
+    
+    return `${hour}:${minute}`
+  },
+
+  // 시간대별 날씨 데이터 조회 (특정 시간대의 모든 구 데이터)
+  async getWeatherByTime(targetDate = null, targetTime = null) {
+    try {
+      const forecastData = await this.getShortForecast()
+      
+      if (!targetDate) {
+        const today = new Date()
+        targetDate = today.getFullYear().toString() + 
+                    (today.getMonth() + 1).toString().padStart(2, '0') + 
+                    today.getDate().toString().padStart(2, '0')
+      }
+      
+      if (!targetTime) {
+        const now = new Date()
+        const currentHour = now.getHours()
+        // 3시간 간격으로 가장 가까운 시간 찾기
+        const forecastHours = [0, 3, 6, 9, 12, 15, 18, 21]
+        const closestHour = forecastHours.reduce((prev, curr) => 
+          Math.abs(curr - currentHour) < Math.abs(prev - currentHour) ? curr : prev
+        )
+        targetTime = closestHour.toString().padStart(2, '0') + '00'
+      }
+      
+      // 해당 시간대 데이터 필터링
+      const timeData = forecastData.filter(item => 
+        item.날짜.toString() === targetDate && 
+        item.시간.toString() === targetTime
+      )
+      
+      // 구별로 그룹화
+      const weatherByRegion = {}
+      timeData.forEach(item => {
+        const region = item.지역
+        if (!weatherByRegion[region]) {
+          weatherByRegion[region] = {
+            region: region,
+            date: targetDate,
+            time: targetTime,
+            formattedTime: this.formatForecastTime(targetTime),
+            formattedDate: this.formatDate(targetDate)
+          }
+        }
+        
+        // 항목별 데이터 매핑
+        if (item.항목 === 'TMP') {
+          weatherByRegion[region].temperature = item.값
+        } else if (item.항목 === 'WSD') {
+          weatherByRegion[region].windSpeed = item.값
+        } else if (item.항목 === 'PCP') {
+          weatherByRegion[region].precipitation = item.값
+        }
+      })
+      
+      return Object.values(weatherByRegion)
+      
+    } catch (error) {
+      console.error('시간대별 날씨 조회 오류:', error)
+      return []
     }
   },
 
