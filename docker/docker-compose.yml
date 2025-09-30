@@ -39,6 +39,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    # Ensure entrypoint runs even if bind-mounted file loses +x
+    entrypoint: ["sh", "/app/docker/entrypoint.sh"]
 
 volumes:
   mysql_data:
