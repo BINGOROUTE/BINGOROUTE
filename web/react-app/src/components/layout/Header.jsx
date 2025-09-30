@@ -1,4 +1,4 @@
-import "../../styles/header.css";
+import "./Header.css";
 import logo from "../../assets/BingoRoute.jpeg";
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'

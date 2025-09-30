@@ -1,0 +1,13 @@
+.chip {
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.chip.active {
+  background: #111827;
+  color: #fff;
+  border-color: #111827;
+}

@@ -1,0 +1,125 @@
+.steps {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin: 8px 0 18px;
+}
+
+.step {
+  height: 6px;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.step.active {
+  background: #111827;
+}
+
+.planner-title {
+  text-align: center;
+  margin: 18px 0 8px;
+}
+
+.planner-sub {
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.chips-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  justify-items: center;
+}
+
+.wide-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.wide-chip {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.wide-chip.active {
+  border-color: #111827;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.planner-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+.neutral-btn {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0;
+}
+
+.band-purple {
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 12px 12px 0 0;
+}
+
+.band-blue {
+  background: linear-gradient(90deg, #60a5fa, #2563eb);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 12px 12px 0 0;
+  margin-top: 16px;
+}
+
+.box {
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  background: #fff;
+  padding: 10px;
+}
+
+.poi-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px;
+  background: #fff;
+}
+
+.score {
+  background: #111827;
+  color: #fff;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-weight: 700;
+}
+
+.selected-list {
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  color: #065f46;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
+}

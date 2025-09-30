@@ -1,3 +1,4 @@
+import './Destinations.css'
 import DestinationCard from './DestinationCard'
 
 const DestinationsGrid = ({ items = [] }) => {

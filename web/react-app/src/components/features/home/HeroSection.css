@@ -1,0 +1,27 @@
+.hero {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300'><defs><linearGradient id='g' x1='0' x2='0' y1='0' y2='1'><stop stop-color='%232563eb'/><stop offset='1' stop-color='%231d4ed8'/></linearGradient></defs><rect width='1200' height='300' fill='url(%23g)'/></svg>") center/cover;
+  border-radius: 18px;
+  color: #fff;
+  padding: 28px 24px;
+  margin: 16px 0;
+}
+
+.hero h1 {
+  margin: 8px 0 6px;
+  font-size: 26px;
+}
+
+.hero p {
+  margin: 0;
+  color: #e0e7ff;
+}
+
+@media (max-width: 960px) {
+  .hero {
+    padding: 22px;
+  }
+
+  .hero h1 {
+    font-size: 22px;
+  }
+}

@@ -1,3 +1,5 @@
+import './MyPageView.css'
+import '../components/features/destinations/Destinations.css'
 import { useStore } from '../context/StoreContext'
 import { DESTINATIONS } from '../data/destinations'
 
@@ -16,7 +18,6 @@ const MyPageView = () => {
 
   const wishlistDestinations = DESTINATIONS.filter(d => wishlist.includes(d.id))
 
-  // 날씨 점수에 따른 CSS 클래스 반환
   const getWeatherScoreClass = (score) => {
     if (score >= 80) return 'excellent'
     if (score >= 70) return 'good'
@@ -25,16 +26,14 @@ const MyPageView = () => {
     return 'poor'
   }
 
-  // 날씨 점수에 따른 아이콘 반환
   const getWeatherIcon = (score) => {
-    if (score >= 80) return '🌟'
-    if (score >= 70) return '☀️'
-    if (score >= 60) return '🌤️'
-    if (score >= 50) return '⛅'
+    if (score >= 80) return '☀️'
+    if (score >= 70) return '🌤️'
+    if (score >= 60) return '⛅️'
+    if (score >= 50) return '☁️'
     return '🌧️'
   }
 
-  // 날씨 점수에 따른 메시지 반환
   const getWeatherMessage = (score) => {
     if (score >= 80) return '완벽한 여행 날씨!'
     if (score >= 70) return '여행하기 좋은 날씨'
@@ -46,7 +45,7 @@ const MyPageView = () => {
   return (
     <div className="br-container">
       <div className="section">
-        <h2>내 정보</h2>
+        <h2>회원 정보</h2>
         <div className="panel">
           <div className="grid-2">
             <div>
@@ -67,7 +66,7 @@ const MyPageView = () => {
           <div className="cards">
             {wishlistDestinations.map(destination => (
               <div key={destination.id} className="card">
-                <div className="img"></div>
+                <div className="img" />
                 <div className="body">
                   <div className="row">
                     <strong>{destination.name}</strong>
@@ -89,7 +88,7 @@ const MyPageView = () => {
       </div>
 
       <div className="section">
-        <h3>내 여행 계획 ({trips.length})</h3>
+        <h3>나의 여행 계획 ({trips.length})</h3>
         {trips.length > 0 ? (
           <div className="trip-list">
             {trips.map((trip, index) => (
@@ -112,7 +111,7 @@ const MyPageView = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="trip-details">
                   <div className="trip-info-grid">
                     <div className="trip-info-item">
@@ -120,7 +119,7 @@ const MyPageView = () => {
                       <span className="info-value">{trip.duration || '미정'}</span>
                     </div>
                     <div className="trip-info-item">
-                      <span className="info-label">스타일</span>
+                      <span className="info-label">여행 스타일</span>
                       <span className="info-value">{trip.style || '미정'}</span>
                     </div>
                     <div className="trip-info-item">
@@ -132,7 +131,7 @@ const MyPageView = () => {
                       <span className="info-value">{trip.companions || '미정'}</span>
                     </div>
                   </div>
-                  
+
                   {trip.weatherScore && (
                     <div className="weather-recommendation">
                       <span className="weather-icon">
@@ -149,8 +148,8 @@ const MyPageView = () => {
           </div>
         ) : (
           <div className="center">
-            <p className="muted">여행 계획이 없습니다.</p>
-            <p className="muted">새로운 여행을 계획해보세요!</p>
+            <p className="muted">저장된 여행 계획이 없습니다.</p>
+            <p className="muted">AI와 함께 새로운 여행을 계획해보세요!</p>
           </div>
         )}
       </div>

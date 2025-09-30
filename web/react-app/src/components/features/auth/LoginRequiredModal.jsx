@@ -1,3 +1,4 @@
+import './LoginRequiredModal.css'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../../../context/StoreContext'
 
@@ -21,7 +22,7 @@ const LoginRequiredModal = () => {
         </div>
         <div className="content">
           <p className="muted" style={{ marginTop: 0 }}>
-            이 기능은 로그인 후 이용할 수 있어요. 로그인하시겠어요?
+            이 기능은 로그인 후 이용하실 수 있어요. 로그인하실까요?
           </p>
           <div className="row" style={{ justifyContent: 'flex-end', gap: 8 }}>
             <button className="ghost-btn" onClick={close}>나중에</button>

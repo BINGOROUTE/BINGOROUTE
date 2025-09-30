@@ -1,3 +1,5 @@
+import './QuickReplies.css'
+
 const QuickReplies = ({ options = [], onSelect }) => {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -16,4 +18,3 @@ const QuickReplies = ({ options = [], onSelect }) => {
 }
 
 export default QuickReplies
-
