@@ -2,29 +2,32 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(255, 255, 255, 0.8);
+  background: #FBF5E9;
   backdrop-filter: saturate(180%) blur(8px);
-  border-bottom: 1px solid #e5e7eb;
+  /* border-bottom: 1px solid #5EABA2; */
+  color: #003651;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-  color: inherit;
+  font-weight: 600; 
+  font-size: 1.8rem;      
+  letter-spacing: 0.5px;  
+  color: #003651;         
   text-decoration: none;
 }
 
+
 .logo-badge {
-  width: 45px;
-  height: 45px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 2px;
-  border: 1px solid #e5e7eb;
-  background: white;
+  /* border: 2px solid #003651; */
+  background: #FBBE0E;
 }
 
 .search {
@@ -34,7 +37,8 @@
 .search input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  background: #fff;
+  border: 2px solid #5EABA2;
+  border-radius: 30px;
+  background: #FBF5E9;
+  color: #5EABA2;
 }

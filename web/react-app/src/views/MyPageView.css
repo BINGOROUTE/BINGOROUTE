@@ -4,16 +4,17 @@
 }
 
 .trip-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: #FBF5E9;
+  border: 1px solid #5EABA2;
   border-radius: 12px;
   padding: 20px;
   transition: all 0.2s;
+  color: #003651;
 }
 
 .trip-card:hover {
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(0, 54, 81, 0.12);
+  border-color: #FC7B54;
 }
 
 .trip-header {
@@ -28,10 +29,11 @@
   gap: 12px;
   align-items: center;
   margin-top: 4px;
+  color: #5EABA2;
 }
 
 .trip-date {
-  color: var(--muted);
+  color: #5EABA2;
   font-size: 14px;
 }
 
@@ -40,31 +42,27 @@
   padding: 2px 8px;
   border-radius: 12px;
   font-weight: 500;
+  color: #003651;
 }
 
 .trip-card .weather-score.excellent {
-  background: #dcfce7;
-  color: #166534;
+  background: rgba(94, 171, 162, 0.2);
 }
 
 .trip-card .weather-score.good {
-  background: #fef3c7;
-  color: #92400e;
+  background: rgba(251, 190, 14, 0.2);
 }
 
 .trip-card .weather-score.fair {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: rgba(252, 123, 84, 0.15);
 }
 
 .trip-card .weather-score.average {
-  background: #f3f4f6;
-  color: #374151;
+  background: rgba(94, 171, 162, 0.12);
 }
 
 .trip-card .weather-score.poor {
-  background: #fee2e2;
-  color: #991b1b;
+  background: rgba(252, 123, 84, 0.25);
 }
 
 .trip-card .score-badge {
@@ -74,14 +72,14 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--brand);
-  color: #fff;
+  background: #5EABA2;
+  color: #FBF5E9;
   font-weight: bold;
   font-size: 14px;
 }
 
 .trip-details {
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid rgba(94, 171, 162, 0.3);
   padding-top: 16px;
 }
 
@@ -100,13 +98,13 @@
 
 .trip-info-item .info-label {
   font-size: 12px;
-  color: var(--muted);
+  color: #5EABA2;
   font-weight: 500;
 }
 
 .trip-info-item .info-value {
   font-size: 14px;
-  color: var(--text);
+  color: #003651;
 }
 
 .trip-card .weather-recommendation {
@@ -114,9 +112,10 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: #f8fafc;
+  background: rgba(251, 190, 14, 0.15);
   border-radius: 8px;
   margin-top: 12px;
+  color: #003651;
 }
 
 .trip-card .weather-icon {
@@ -125,7 +124,7 @@
 
 .trip-card .weather-message {
   font-size: 14px;
-  color: var(--text);
+  color: #003651;
   font-weight: 500;
 }
 

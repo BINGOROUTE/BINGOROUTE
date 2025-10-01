@@ -8,20 +8,21 @@
 .step {
   height: 6px;
   border-radius: 999px;
-  background: #e5e7eb;
+  background: rgba(94, 171, 162, 0.3);
 }
 
 .step.active {
-  background: #111827;
+  background: #FC7B54;
 }
 
 .planner-title {
   text-align: center;
   margin: 18px 0 8px;
+  color: #003651;
 }
 
 .planner-sub {
-  color: #6b7280;
+  color: #5EABA2;
   text-align: center;
   margin-bottom: 18px;
 }
@@ -41,15 +42,17 @@
 
 .wide-chip {
   padding: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #5EABA2;
   border-radius: 12px;
   cursor: pointer;
-  background: #fff;
+  background: #FBF5E9;
+  color: #003651;
 }
 
 .wide-chip.active {
-  border-color: #111827;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border-color: #FC7B54;
+  background: rgba(252, 123, 84, 0.12);
+  box-shadow: 0 6px 16px rgba(252, 123, 84, 0.2);
 }
 
 .planner-actions {
@@ -59,11 +62,12 @@
 }
 
 .neutral-btn {
-  border: 1px solid #e5e7eb;
-  background: #fff;
+  border: 1px solid #5EABA2;
+  background: #FBF5E9;
   padding: 10px 16px;
   border-radius: 10px;
   cursor: pointer;
+  color: #003651;
 }
 
 .section-header {
@@ -71,29 +75,31 @@
   align-items: center;
   justify-content: space-between;
   margin: 8px 0;
+  color: #003651;
 }
 
 .band-purple {
-  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
-  color: #fff;
+  background: linear-gradient(90deg, #5EABA2, #FBBE0E);
+  color: #003651;
   padding: 10px 12px;
   border-radius: 12px 12px 0 0;
 }
 
 .band-blue {
-  background: linear-gradient(90deg, #60a5fa, #2563eb);
-  color: #fff;
+  background: linear-gradient(90deg, #FC7B54, #FBBE0E);
+  color: #003651;
   padding: 10px 12px;
   border-radius: 12px 12px 0 0;
   margin-top: 16px;
 }
 
 .box {
-  border: 1px solid #e5e7eb;
+  border: 1px solid #5EABA2;
   border-top: none;
   border-radius: 0 0 12px 12px;
-  background: #fff;
+  background: #FBF5E9;
   padding: 10px;
+  color: #003651;
 }
 
 .poi-row {
@@ -101,24 +107,25 @@
   grid-template-columns: 1fr auto;
   gap: 10px;
   align-items: center;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #5EABA2;
   border-radius: 12px;
   padding: 10px;
-  background: #fff;
+  background: #FBF5E9;
+  color: #003651;
 }
 
 .score {
-  background: #111827;
-  color: #fff;
+  background: #FBBE0E;
+  color: #003651;
   border-radius: 8px;
   padding: 4px 8px;
   font-weight: 700;
 }
 
 .selected-list {
-  background: #ecfdf5;
-  border: 1px solid #d1fae5;
-  color: #065f46;
+  background: rgba(94, 171, 162, 0.18);
+  border: 1px solid #5EABA2;
+  color: #003651;
   border-radius: 12px;
   padding: 10px;
   margin-bottom: 10px;

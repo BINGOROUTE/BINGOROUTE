@@ -7,18 +7,19 @@
 .card {
   background: var(--card);
   border-radius: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #5EABA2;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.04);
+  box-shadow: 0 4px 12px rgba(0, 54, 81, 0.08);
 }
 
 .card .img {
   height: 150px;
-  background: #c7d2fe;
+  background: linear-gradient(135deg, #5EABA2 0%, #FBBE0E 100%);
 }
 
 .card .body {
   padding: 12px;
+  color: #003651;
 }
 
 @media (max-width: 960px) {

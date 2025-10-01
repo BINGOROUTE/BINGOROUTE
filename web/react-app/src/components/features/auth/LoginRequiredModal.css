@@ -1,7 +1,7 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.5);
+  background: rgba(0, 54, 81, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,12 +9,14 @@
 }
 
 .modal {
-  background: #fff;
+  background: #FBF5E9;
   border-radius: 16px;
   max-width: 720px;
   width: 92%;
-  box-shadow: 0 18px 60px rgba(2, 6, 23, 0.35);
+  box-shadow: 0 18px 60px rgba(0, 54, 81, 0.35);
   overflow: hidden;
+  /* border: 1px solid #5EABA2; */
+  color: #003651;
 }
 
 .modal .header {
@@ -22,7 +24,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 14px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #5EABA2;
 }
 
 .modal .content {
