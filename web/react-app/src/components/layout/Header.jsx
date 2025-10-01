@@ -1,22 +1,39 @@
-import "./Header.css";
-import logo from "../../assets/BingoRoute.jpeg";
+﻿import './Header.css'
+import logo from '../../assets/BingoRoute.jpeg'
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from "../../hooks/api/useAuth";
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../hooks/api/useAuth'
 import { ROUTES } from '../../router/routes'
 
 const Header = () => {
   const { user, logout, isAuthenticated } = useAuth()
   const location = useLocation()
-  const HIDE_SEARCH_PREFIXES = [ROUTES.PLANNER, ROUTES.LOGIN, ROUTES.SIGNUP, ROUTES.MYPAGE]
-  const hideSearch = HIDE_SEARCH_PREFIXES.some(prefix => location.pathname.startsWith(prefix))
+  const navigate = useNavigate()
+  const isLoginPage = location.pathname === ROUTES.LOGIN
+  const HIDE_SEARCH_PREFIXES = [
+    ROUTES.PLANNER,
+    ROUTES.LOGIN,
+    ROUTES.SIGNUP,
+    ROUTES.FIND_ID,
+    ROUTES.FIND_PASSWORD,
+    ROUTES.MYPAGE,
+  ]
+  const hideSearch = HIDE_SEARCH_PREFIXES.some((prefix) => location.pathname.startsWith(prefix))
   const [searchQuery, setSearchQuery] = useState('')
 
-  const handleSearch = (e) => {
-    const query = e.target.value
+  const handleSearch = (event) => {
+    const query = event.target.value
     setSearchQuery(query)
-    // Dispatch custom event for search (maintaining compatibility)
     document.dispatchEvent(new CustomEvent('br:search', { detail: query }))
+  }
+
+  const goToMyPage = () => {
+    if (!isAuthenticated) return
+    navigate(ROUTES.MYPAGE)
+  }
+
+  const goToLogin = () => {
+    navigate(ROUTES.LOGIN)
   }
 
   const rightArea = () => {
@@ -24,14 +41,19 @@ const Header = () => {
       return (
         <div className="row">
           <span className="muted">{user.name || user.first_name || user.email}</span>
-          <Link to={ROUTES.MYPAGE} className="ghost-btn">내 정보</Link>
+          <button className="ghost-btn" onClick={goToMyPage}>내 정보</button>
           <button className="ghost-btn" onClick={logout}>로그아웃</button>
         </div>
       )
     }
+
+    if (isLoginPage) {
+      return <div className="row" />
+    }
+
     return (
       <div className="row">
-        <Link to={ROUTES.LOGIN} className="ghost-btn">로그인</Link>
+        <button className="ghost-btn" onClick={goToLogin}>로그인</button>
       </div>
     )
   }
@@ -44,12 +66,11 @@ const Header = () => {
           <span>빙고루트</span>
         </Link>
         {hideSearch ? (
-          // 챗봇 화면에서는 검색 입력창 숨김. 레이아웃 간격 유지를 위해 빈 공간 유지
           <div style={{ flex: 1 }} />
         ) : (
           <div className="search">
-            <input 
-              placeholder="예: 경복궁, 근처 한옥카페…" 
+            <input
+              placeholder="예: 강릉 맛집 카페 투어"
               value={searchQuery}
               onChange={handleSearch}
             />

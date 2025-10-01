@@ -1,12 +1,13 @@
-.hero {
-  background: linear-gradient(135deg, #FBF5E9 0%, #5EABA2 50%);
-  border-radius: 18px;
-  color: #003651;
-  padding: 28px 24px;
-  margin: 16px 0;
-  /* border: 1px solid #FC7B54; */
-  box-shadow: 0 6px 18px rgba(0, 54, 81, 0.12);
-}
+.hero { 
+  background-image: url('../../../assets/image01.png'); 
+  background-size: cover; 
+  background-position: center; background-repeat: no-repeat; 
+  border-radius: 18px; 
+  color: #003651; 
+  padding: 28px 24px; 
+  margin: 16px 0; 
+  /* border: 1px solid #FC7B54; */ 
+  box-shadow: 0 6px 18px rgba(0, 54, 81, 0.12); }
 
 .hero h1 {
   margin: 8px 0 6px;

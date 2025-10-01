@@ -6,8 +6,8 @@ const WeatherSection = ({ loading, districts = [], selectedDistrict, onChangeDis
   return (
     <div className="section">
       <div className="panel">
-        <div className="row" style={{ justifyContent: 'space-between', marginBottom: '8px' }}>
-          <strong>서울 지역 날씨 정보</strong>
+        <div className="row" style={{ justifyContent: 'space-between', marginBottom: '10px' }}>
+          <strong>🌏 서울 지역 날씨 정보  </strong>
           <WeatherSelector
             districts={districts}
             selectedDistrict={selectedDistrict}

@@ -8,16 +8,16 @@ const WeatherDisplay = ({ currentWeather, selectedDistrict, loading }) => {
       <div className="meta">
         서울 {selectedDistrict} {currentWeather.temp}°C · 바람 {currentWeather.wind} · 하늘 {currentWeather.sky}
       </div>
-      <div className="muted" style={{ marginTop: '6px' }}>
+      <div className="muted" style={{ marginTop: '10px' }}>
         {currentWeather.advice}
       </div>
       {currentWeather.timeInfo && (
-        <div className="muted" style={{ marginTop: '4px', fontSize: '0.9em' }}>
+        <div className="muted" style={{ marginTop: '10px', fontSize: '1em' }}>
           📅 {currentWeather.timeInfo} | 서울시간 기준
         </div>
       )}
       {currentWeather.rainfall && parseFloat(currentWeather.rainfall) > 0 && (
-        <div className="muted" style={{ marginTop: '4px' }}>
+        <div className="muted" style={{ marginTop: '10px' }}>
           강수량: {currentWeather.rainfall}mm
         </div>
       )}
