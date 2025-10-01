@@ -9,3 +9,10 @@
 > ### 추후 주석처리 원복할 때 삭제 예정
 ------ 
 이라 적어둔 것은 추후 api 복구 시 주석 원복과 함께 다시 삭제 
+
+
+----------------
+# 첫 실행시 해야되는 것들 
+1. npm install 안 한 사람은 꼭 npm install 먼저 
+2. ```docker-compose up --build -d``` (docker build도 안 했으면) 그후부터 수정은 ```docker-compose up -d``` 인데 현재 Dockerfile 내용이 변경됐으므로 ```docker-compose up --build -d``` 부탁드립니다. 
+

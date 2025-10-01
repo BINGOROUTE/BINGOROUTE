@@ -36,8 +36,15 @@ class WeatherService:
             
             # 현재 시간에 가장 가까운 예보 시간 찾기 (3시간 간격)
             forecast_hours = [0, 3, 6, 9, 12, 15, 18, 21]
-            closest_hour = min(forecast_hours, key=lambda x: abs(x - current_hour))
+
+            # 현재 시간 이하 중 가장 가까운 값 우선
+            past_hours = [h for h in forecast_hours if h <= current_hour]
+            if past_hours:
+                closest_hour = max(past_hours)
+            else:
+                closest_hour = min(forecast_hours)  # 자정 직후 같은 경우
             target_time = f"{closest_hour:02d}00"
+
             
             # 단기 예보에서 현재 시간대 데이터 필터링
             current_df = df[
