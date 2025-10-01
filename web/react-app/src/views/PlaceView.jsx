@@ -77,24 +77,35 @@ const PlaceView = () => {
         <div className="panel">
           <h3>방문 정보</h3>
           <div className="grid-2">
-            <div>
-              <strong>추천 소요시간</strong>
-              <p>{destination.duration}</p>
-            </div>
-            <div>
-              <strong>평점</strong>
-              <p>{destination.rating}/5.0</p>
-            </div>
           </div>
-          <div>
-            <strong>태그</strong>
-            <div style={{ marginTop: '8px' }}>
-              {destination.tags.map(tag => (
-                <span key={tag} className="pill" style={{ marginRight: '8px' }}>
-                  {tag}
-                </span>
-              ))}
-            </div>
+
+           {/* 🔽 추가 정보 블록 */}
+          <div
+            style={{
+              marginTop: '16px',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '12px 24px' // 세로 12px, 가로 24px 간격
+            }}
+          >
+            <div><strong>전화번호</strong><p>{destination.phone || '-'}</p></div>
+            <div><strong>휴무일</strong><p>{destination.closed || '-'}</p></div>
+            <div><strong>운영시간</strong><p>{destination.hours || '-'}</p></div>
+            <div><strong>운영계절</strong><p>{destination.season || '-'}</p></div>
+            <div><strong>주차장</strong><p>{destination.parking ? '가능' : '불가'}</p></div>
+            <div><strong>유모차</strong><p>{destination.stroller ? '가능' : '불가'}</p></div>
+            <div><strong>반려동물 입장</strong><p>{destination.pet ? '가능' : '불가'}</p></div>
+            <div><strong>신용카드</strong><p>{destination.card ? '가능' : '불가'}</p></div>
+              <div>
+                <strong>태그</strong>
+                <div style={{ marginTop: '8px' }}>
+                  {destination.tags.map(tag => (
+                    <span key={tag} className="pill" style={{ marginRight: '8px' }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
           </div>
         </div>
       </div>
