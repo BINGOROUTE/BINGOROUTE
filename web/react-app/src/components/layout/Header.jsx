@@ -10,6 +10,7 @@ const Header = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const isLoginPage = location.pathname === ROUTES.LOGIN
+  const isMyPage = location.pathname.startsWith(ROUTES.MYPAGE)
   const HIDE_SEARCH_PREFIXES = [
     ROUTES.PLANNER,
     ROUTES.LOGIN,
@@ -41,7 +42,9 @@ const Header = () => {
       return (
         <div className="row">
           <span className="muted">{user.name || user.first_name || user.email}</span>
-          <button className="ghost-btn" onClick={goToMyPage}>내 정보</button>
+          {!isMyPage && (
+            <button className="ghost-btn" onClick={goToMyPage}>내 정보</button>
+          )}
           <button className="ghost-btn" onClick={logout}>로그아웃</button>
         </div>
       )

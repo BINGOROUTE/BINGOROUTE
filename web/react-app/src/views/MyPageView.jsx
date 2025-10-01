@@ -1,5 +1,6 @@
 import './MyPageView.css'
 import '../components/features/destinations/Destinations.css'
+import DestinationCard from '../components/features/destinations/DestinationCard'
 import { useStore } from '../context/StoreContext'
 import { DESTINATIONS } from '../data/destinations'
 
@@ -65,19 +66,7 @@ const MyPageView = () => {
         {wishlistDestinations.length > 0 ? (
           <div className="cards">
             {wishlistDestinations.map(destination => (
-              <div key={destination.id} className="card">
-                <div className="img" />
-                <div className="body">
-                  <div className="row">
-                    <strong>{destination.name}</strong>
-                    <span className="pill">{destination.duration}</span>
-                  </div>
-                  <div className="meta">
-                    {destination.area} · 평점 {destination.rating}
-                  </div>
-                  <p className="muted">{destination.short}</p>
-                </div>
-              </div>
+              <DestinationCard key={destination.id} destination={destination} />
             ))}
           </div>
         ) : (
