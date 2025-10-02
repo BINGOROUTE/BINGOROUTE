@@ -73,7 +73,7 @@ const Header = () => {
         ) : (
           <div className="search">
             <input
-              placeholder="예: 강릉 맛집 카페 투어"
+              placeholder="예: 서울 맛집 카페 투어"
               value={searchQuery}
               onChange={handleSearch}
             />

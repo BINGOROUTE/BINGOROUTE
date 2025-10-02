@@ -31,13 +31,9 @@ const DestinationCard = ({ destination }) => {
   }, [destination.id, isAuthenticated, promptLogin, setWishlist])
 
   const handleNavigate = useCallback(() => {
-    if (!isAuthenticated) {
-      promptLogin()
-      return
-    }
-
-    navigate(`/place/${destination.id}`)
-  }, [destination.id, isAuthenticated, navigate, promptLogin])
+    // PlaceView는 더 이상 사용하지 않으므로 이 함수는 빈 함수로 유지
+    // 모든 상세 정보는 모달에서 처리됩니다
+  }, [])
 
   const openModal = useCallback(() => {
     setIsModalOpen(true)

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './MyPageView.css'
 import '../components/features/destinations/Destinations.css'
 import DestinationCard from '../components/features/destinations/DestinationCard'
@@ -5,7 +6,48 @@ import { useStore } from '../context/StoreContext'
 import { DESTINATIONS } from '../data/destinations'
 
 const MyPageView = () => {
-  const { session, wishlist, trips } = useStore()
+  const { session, setSession, wishlist, trips } = useStore()
+  const [isEditing, setIsEditing] = useState(false)
+  const [editForm, setEditForm] = useState({
+    name: session?.name || session?.first_name || '',
+    email: session?.email || ''
+  })
+
+  const handleEditStart = () => {
+    setEditForm({
+      name: session?.name || session?.first_name || '',
+      email: session?.email || ''
+    })
+    setIsEditing(true)
+  }
+
+  const handleEditCancel = () => {
+    setIsEditing(false)
+    setEditForm({
+      name: session?.name || session?.first_name || '',
+      email: session?.email || ''
+    })
+  }
+
+  const handleEditSave = () => {
+    const updatedSession = {
+      ...session,
+      name: editForm.name,
+      first_name: editForm.name,
+      email: editForm.email
+    }
+    setSession(updatedSession)
+    setIsEditing(false)
+    alert('회원정보가 수정되었습니다!')
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setEditForm(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
 
   if (!session) {
     return (
@@ -46,18 +88,68 @@ const MyPageView = () => {
   return (
     <div className="br-container">
       <div className="section">
-        <h2>회원 정보</h2>
+        <div className="section-header">
+          <h2>회원 정보</h2>
+          {!isEditing ? (
+            <button className="btn-edit" onClick={handleEditStart}>
+              회원정보 수정하기
+            </button>
+          ) : (
+            <div className="edit-actions">
+              <button className="btn-save" onClick={handleEditSave}>
+                저장
+              </button>
+              <button className="btn-cancel" onClick={handleEditCancel}>
+                취소
+              </button>
+            </div>
+          )}
+        </div>
+
         <div className="panel">
-          <div className="grid-2">
-            <div>
-              <strong>이름</strong>
-              <p>{session.name || session.first_name || ''}</p>
+          {!isEditing ? (
+            <div className="grid-2">
+              <div>
+                <strong>이름</strong>
+                <p>{session.name || session.first_name || ''}</p>
+              </div>
+              <div>
+                <strong>이메일</strong>
+                <p>{session.email}</p>
+              </div>
             </div>
-            <div>
-              <strong>이메일</strong>
-              <p>{session.email}</p>
+          ) : (
+            <div className="edit-form">
+              <div className="form-group">
+                <label htmlFor="name">
+                  <strong>이름</strong>
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={editForm.name}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="이름을 입력하세요"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="email">
+                  <strong>이메일</strong>
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={editForm.email}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="이메일을 입력하세요"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

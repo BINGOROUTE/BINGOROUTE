@@ -8,7 +8,7 @@ import FindIdView from '../views/FindIdView'
 import FindPasswordView from '../views/FindPasswordView'
 import MyPageView from '../views/MyPageView'
 import ChatbotView from '../views/ChatbotView'
-import PlaceView from '../views/PlaceView'
+
 import { ROUTES } from './routes'
 
 const AppRouter = () => {
@@ -23,7 +23,7 @@ const AppRouter = () => {
           <Route path={ROUTES.FIND_PASSWORD} element={<FindPasswordView />} />
           <Route path={ROUTES.MYPAGE} element={<RequireAuth><MyPageView /></RequireAuth>} />
           <Route path={ROUTES.PLANNER} element={<RequireAuth><ChatbotView /></RequireAuth>} />
-          <Route path={ROUTES.PLACE} element={<PlaceView />} />
+          <Route path={ROUTES.PLACE} element={<HomePage />} />
         </Routes>
       </Layout>
     </Router>

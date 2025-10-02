@@ -87,3 +87,99 @@
     font-size: 20px;
   }
 }
+/* PlaceView Style Modal Content */
+.destination-modal__content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-hero {
+  background: #c7d2fe;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.modal-hero__tags {
+  margin-bottom: 8px;
+}
+
+.modal-tag {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 13px;
+  margin-right: 8px;
+  display: inline-block;
+}
+
+.modal-hero__title {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #003651;
+}
+
+.modal-hero__meta {
+  margin: 0;
+  color: #003651;
+  opacity: 0.8;
+}
+
+.modal-section {
+  background: #FBF5E9;
+  border: 1px solid rgba(94, 171, 162, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.modal-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #003651;
+}
+
+.modal-section p {
+  margin: 0;
+  line-height: 1.6;
+  color: #003651;
+}
+
+.modal-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.modal-info-grid strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #003651;
+}
+
+.modal-info-grid p {
+  margin: 0;
+  color: #5EABA2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .modal-hero {
+    padding: 16px;
+  }
+  
+  .modal-hero__title {
+    font-size: 20px;
+  }
+  
+  .modal-section {
+    padding: 12px;
+  }
+  
+  .modal-info-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

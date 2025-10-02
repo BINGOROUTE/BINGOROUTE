@@ -18,11 +18,11 @@ const LoginRequiredModal = () => {
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="modal">
         <div className="header">
-          <strong>로그인이 필요합니다</strong>
+          <strong>로그인이 필요합니다.</strong>
         </div>
         <div className="content">
           <p className="muted" style={{ marginTop: 0 }}>
-            이 기능은 로그인 후 이용하실 수 있어요. 로그인하실까요?
+            잠깐! 이 기능은 로그인 후 이용하실 수 있어요. 로그인 하시겠어요?
           </p>
           <div className="row" style={{ justifyContent: 'flex-end', gap: 8 }}>
             <button className="ghost-btn" onClick={close}>나중에</button>

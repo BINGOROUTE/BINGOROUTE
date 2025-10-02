@@ -77,7 +77,7 @@ const HomePage = () => {
       />
 
       <div className="section">
-        <h3>추천 여행지</h3>
+        <h2>추천 여행지</h2>
         <DestinationsFilter
           areas={areas}
           themes={themes}
