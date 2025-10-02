@@ -1,0 +1,132 @@
+.steps {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin: 8px 0 18px;
+}
+
+.step {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(94, 171, 162, 0.3);
+}
+
+.step.active {
+  background: #FC7B54;
+}
+
+.planner-title {
+  text-align: center;
+  margin: 18px 0 8px;
+  color: #003651;
+}
+
+.planner-sub {
+  color: #5EABA2;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.chips-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  justify-items: center;
+}
+
+.wide-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.wide-chip {
+  padding: 16px;
+  border: 1px solid #5EABA2;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #FBF5E9;
+  color: #003651;
+}
+
+.wide-chip.active {
+  border-color: #FC7B54;
+  background: rgba(252, 123, 84, 0.12);
+  box-shadow: 0 6px 16px rgba(252, 123, 84, 0.2);
+}
+
+.planner-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+.neutral-btn {
+  border: 1px solid #5EABA2;
+  background: #FBF5E9;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #003651;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0;
+  color: #003651;
+}
+
+.band-purple {
+  background: linear-gradient(90deg, #5EABA2, #FBBE0E);
+  color: #003651;
+  padding: 10px 12px;
+  border-radius: 12px 12px 0 0;
+}
+
+.band-blue {
+  background: linear-gradient(90deg, #FC7B54, #FBBE0E);
+  color: #003651;
+  padding: 10px 12px;
+  border-radius: 12px 12px 0 0;
+  margin-top: 16px;
+}
+
+.box {
+  border: 1px solid #5EABA2;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  background: #FBF5E9;
+  padding: 10px;
+  color: #003651;
+}
+
+.poi-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid #5EABA2;
+  border-radius: 12px;
+  padding: 10px;
+  background: #FBF5E9;
+  color: #003651;
+}
+
+.score {
+  background: #FBBE0E;
+  color: #003651;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-weight: 700;
+}
+
+.selected-list {
+  background: rgba(94, 171, 162, 0.18);
+  border: 1px solid #5EABA2;
+  color: #003651;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
+}

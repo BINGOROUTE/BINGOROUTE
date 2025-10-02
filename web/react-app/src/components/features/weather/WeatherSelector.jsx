@@ -8,7 +8,7 @@ const WeatherSelector = ({ districts = [], selectedDistrict, onChangeDistrict, l
       onChange={onChangeDistrict}
       loading={loading}
       loadingText="로딩 중..."
-      placeholder="구를 선택하세요"
+      placeholder="지역구 선택"
     />
   )
 }

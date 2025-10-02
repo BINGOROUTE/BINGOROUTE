@@ -1,0 +1,109 @@
+.section {
+  margin: 16px 0;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.muted {
+  color: #003651;
+}
+
+/* 서울 강남구 20°C · 바람 2 m/s · 하늘 맑음 */
+.meta {
+  display: flex;
+  gap: 8px;
+  color: #003651;
+  font-size: 13px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.input {
+  padding: 10px 12px;
+  border: 1px solid #5EABA2;
+  border-radius: 10px;
+  background: #FBF5E9;
+  color: #003651;
+}
+
+.form {
+  display: grid;
+  gap: 10px;
+}
+
+/* 날씨 정보 부분 */
+.panel {
+  background: #FBF5E9;
+  border: 1px solid #5EABA2;
+  border-radius: 16px;
+  padding: 20px;
+  color: #003651;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #003651;
+}
+
+.link {
+  color: #FC7B54;
+  cursor: pointer;
+}
+
+.right {
+  margin-left: auto;
+}
+
+.brand-btn {
+  background: #5EABA2;
+  color: #FBF5E9;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(94, 171, 162, 0.3);
+}
+
+.brand-btn:active {
+  transform: translateY(1px);
+}
+
+.ghost-btn {
+  border: 1px solid #5EABA2;
+  background: #5EABA2;
+  border-radius: 20px;
+  padding: 10px 15px;
+  cursor: pointer;
+  color: #003651;
+}
+
+/* 버튼 비활성화됐을 때 */
+.ghost-btn:disabled,
+.brand-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+/* AI 추천 가이드 */
+.pill {
+  font-size: 13px;
+  background: #FBBE0E;
+  /* border: 1px solid #FC7B54; */
+  color: #003651;
+  border-radius: 999px;
+  padding: 3px 8px;
+}

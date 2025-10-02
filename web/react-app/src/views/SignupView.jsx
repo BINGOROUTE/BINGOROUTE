@@ -3,6 +3,9 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
 import { signup as signupRequest, login as loginRequest } from '../services/authService'
 
+
+// '''회원가입창'''
+
 const SignupView = () => {
   const { setSession } = useStore()
   const navigate = useNavigate()

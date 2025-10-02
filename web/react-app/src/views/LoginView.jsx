@@ -1,7 +1,8 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
 import { login as loginRequest } from '../services/authService'
+import { ROUTES } from '../router/routes'
 
 const LoginView = () => {
   const { setSession } = useStore()
@@ -10,13 +11,14 @@ const LoginView = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleSubmit = async (event) => {
+    event.preventDefault()
     setError('')
+
     try {
       const { user, access } = await loginRequest({ email, password })
       setSession({ ...user, access })
-      navigate('/')
+      navigate(ROUTES.HOME)
     } catch (err) {
       setError(err.message || '로그인에 실패했습니다.')
     }
@@ -33,7 +35,7 @@ const LoginView = () => {
               className="input"
               placeholder="이메일"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event) => setEmail(event.target.value)}
               required
             />
             <input
@@ -41,14 +43,18 @@ const LoginView = () => {
               className="input"
               placeholder="비밀번호"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(event) => setPassword(event.target.value)}
               required
             />
             {error && <div style={{ color: 'red', fontSize: '14px' }}>{error}</div>}
             <button type="submit" className="brand-btn">로그인</button>
           </form>
-          <div style={{ textAlign: 'center', marginTop: '16px' }}>
-            계정이 없으신가요? <Link to="/signup" className="link">회원가입</Link>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '14px', fontSize: '15px' }}>
+            <Link to={ROUTES.FIND_ID} className="link">아이디 찾기</Link>
+            <Link to={ROUTES.FIND_PASSWORD} className="link">비밀번호 찾기</Link>
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '14px' }}>
+            계정이 없으신가요? <Link to={ROUTES.SIGNUP} className="link">회원가입</Link>
           </div>
         </div>
       </div>

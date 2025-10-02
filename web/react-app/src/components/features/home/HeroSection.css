@@ -1,0 +1,30 @@
+.hero { 
+  background-image: url('../../../assets/image01.png'); 
+  background-size: cover; 
+  background-position: center; background-repeat: no-repeat; 
+  border-radius: 18px; 
+  color: #003651; 
+  padding: 28px 24px; 
+  margin: 16px 0; 
+  /* border: 1px solid #FC7B54; */ 
+  box-shadow: 0 6px 18px rgba(0, 54, 81, 0.12); }
+
+.hero h1 {
+  margin: 8px 0 6px;
+  font-size: 26px;
+}
+
+.hero p {
+  margin: 0;
+  color: #003651;
+}
+
+@media (max-width: 960px) {
+  .hero {
+    padding: 22px;
+  }
+
+  .hero h1 {
+    font-size: 22px;
+  }
+}

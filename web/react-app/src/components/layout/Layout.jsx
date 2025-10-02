@@ -1,5 +1,6 @@
 import Header from './Header'
 import LoginRequiredModal from '../features/auth/LoginRequiredModal'
+import './Layout.css'
 
 const Layout = ({ children }) => {
   return (

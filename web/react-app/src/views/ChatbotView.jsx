@@ -84,7 +84,7 @@ const ChatbotView = () => {
         {/* 입력 영역 */}
         <ChatInput onSend={handleSend} />
 
-        <div className="muted" style={{ fontSize: 12, marginTop: 8 }}>
+        <div className="muted" style={{ fontSize: 15, marginTop: 8 }}>
           AI가 생성한 답변입니다. 실제 정보와 다를 수 있으니 참고용으로만 활용해주세요.
         </div>
       </div>
