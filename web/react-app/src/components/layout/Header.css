@@ -53,7 +53,7 @@
 
 /* 우측 영역 길이 고정 */
 .br-header .row {
-  min-width: 350px;
+  min-width: 380px;
   /* 최소 너비만 보장 */
   flex-shrink: 0;
   /* 축소 방지 */
